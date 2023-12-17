@@ -1,0 +1,56 @@
+.order h1 {
+  text-align: center;
+  font-size: 3rem;
+  margin-top: 65px;
+}
+
+.header {
+  background-color: #ffffff;
+  text-align: center;
+  font-size: 3rem;
+  margin-bottom: 20px;
+  width: 100%;
+  font-weight: bold; /* Use font-weight instead of font-style for bold */
+  color: #111827;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #2563eb;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 50px;
+  margin: 35px;
+}
+
+.dataTable {
+  background-color: #f9fafb;
+  border: 1px solid #f9fafb;
+  border-radius: 10px; /* Adjusted border-radius */
+  padding: 10px;
+}
+
+.dataTable .rdt_TableRow {
+  background-color: #f9fafb;
+  color: #111317;
+}
+
+.dataTable .rdt_TableHead {
+  color: #1f2937;
+}
+
+.centered-button {
+  text-align: center;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.search-bar {
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
