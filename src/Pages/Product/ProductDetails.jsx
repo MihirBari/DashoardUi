@@ -24,9 +24,14 @@ const ProductDetails = ({ product }) => {
   const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
-    // Assuming that product_image is a base64-encoded string
-    const base64Image = `data:image/jpeg;base64,${product_image}`;
-    setImageSrc(base64Image);
+    if (product_image.startsWith("data:image")) {
+     
+      setImageSrc(product_image);
+    } else {
+     
+      const base64Image = `data:image/jpeg;base64,${product_image}`;
+      setImageSrc(base64Image);
+    }
   }, [product_image]);
 
   const sizes = [
