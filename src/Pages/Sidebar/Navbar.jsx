@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Logout from "../Logout"
 
 const SideNavBar = () => {
   const [open, setOpen] = useState(true);
@@ -11,6 +12,7 @@ const SideNavBar = () => {
     { title: "Search", src: "Search", link: "/search" },
     { title: "Orders", src: "Chart", link: "/Customer" },
     { title: "Seller", src: "Chart", link: "/Seller" },
+    { title: "Logout", src: "Chat", link: "/" },
   ];
 
   const handleTabClick = (index) => {

@@ -38,26 +38,47 @@ const TableOrder = () => {
       navigate(`edit/${product_id}`);
   };
 
-    const handleDeleteClick = (product_id) => {
-      const idToDelete = product_id; 
-      console.log('Deleting order with ID:', idToDelete);
-    
-      axios.delete(`${API_BASE_URL}/api/order/delete`, { data: { productId: idToDelete } })
-        .then(response => {
-          console.log('Delete successful:', response.data);
-          window.location.reload();
-          toast.success("Deleted Successfully");
-        })
-        .catch(error => {
-          console.error('Error deleting:', error);
-        });
+  const handleDeleteClick = (row) => {
+    console.log('Row:', row);
+  
+    // List of size property names
+    const sizeProperties = ['s', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl', 'xxxxxl', 'xxxxxxl'];
+  
+    // Find the first valid size property
+    const validSize = sizeProperties.find((size) => row[size] !== null && row[size] !== undefined);
+  
+    // Check if a valid size and sizeValue are present
+    if (!validSize || row.Total_items === undefined) {
+      console.error('Invalid size or sizeValue in row:', row);
+      return;
+    }
+  
+    const requestData = {
+      product_id: row.product_id,
+      size: validSize, // Use the correct property name
+      sizeValue: row.Total_items,
     };
-
-
-    const handleExportClick = () => {
-        setExportModalIsOpen(true);
-      };
-    
+  
+    axios({
+      method: 'delete',
+      url: `${API_BASE_URL}/api/order/delete`,
+      data: requestData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        console.log('Delete successful:', response.data);
+        window.location.reload();
+        toast.success('Deleted Successfully');
+      })
+      .catch((error) => {
+        console.error('Error deleting:', error);
+        toast.error('Error deleting order');
+      });
+  };
+  
+  
 
     const columns = [
         {
@@ -135,13 +156,13 @@ const TableOrder = () => {
             ),
             button: true,
         },
-        // {
-        //     name: 'Delete',
-        //     cell: (row) => (
-        //         <MdDelete onClick={() => handleDeleteClick(row)}>Delete</MdDelete>
-        //     ),
-        //     button: true,
-        // },
+        {
+            name: 'Delete',
+            cell: (row) => (
+              <MdDelete onClick={() => handleDeleteClick(row)}>Delete</MdDelete>
+            ),
+            button: true,
+        },
     ];
 
     const CustomHeader = ({ column }) => (
