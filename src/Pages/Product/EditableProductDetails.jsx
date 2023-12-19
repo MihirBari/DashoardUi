@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../../config";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const EditableProductDetails = ({ product, onSave }) => {
   const [editedProduct, setEditedProduct] = useState(product);
@@ -13,6 +16,36 @@ const EditableProductDetails = ({ product, onSave }) => {
       e.target.type === "number" ? Number(e.target.value) : e.target.value;
 
     setEditedProduct({ ...editedProduct, [e.target.name]: value });
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+  
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/prod/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        setEditedProduct((prev) => ({
+          ...prev,
+          product_image: response.data.imagePath,
+        }));
+        toast.success("Image uploaded successfully");
+      } else {
+        console.error("Failed to upload image");
+      }
+    } catch (error) {
+      console.error("Error uploading image: " + error.message);
+    }
   };
 
   const handleSaveClick = () => {
@@ -198,7 +231,23 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+            <div>
+                <label
+                  htmlFor="product_image"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Product Images
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    type="file"
+                    name="product_image"
+                    onChange={(e) => handleImageChange(e)}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    multiple
+                  />
+                </div>
+              </div>
           </div>
   
           <div className="flex justify-between items-center mt-4">

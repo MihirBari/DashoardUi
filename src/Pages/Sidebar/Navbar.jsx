@@ -7,11 +7,11 @@ const SideNavBar = () => {
   const [activeTab, setActiveTab] = useState(0);
   const Menus = [
     { title: "Dashboard", src: "Chart_fill", link: "/dashboard" },
-    { title: "User", src: "Chat", link: "/user" },
-    { title: "Inventor", src: "User", link: "/Product" },
+    { title: "User", src: "User", link: "/user" },
+    { title: "Inventor", src: "Folder", link: "/Product" },
     { title: "Search", src: "Search", link: "/search" },
     { title: "Orders", src: "Chart", link: "/Customer" },
-    { title: "Seller", src: "Chart", link: "/Seller" },
+    { title: "Seller", src: "Setting", link: "/Seller" },
     { title: "Logout", src: "Chat", link: "/" },
   ];
 
@@ -54,7 +54,7 @@ const SideNavBar = () => {
             <Link to={Menu.link}>
              <li
               key={index}
-              className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 text-sm items-center gap-x-4 
+              className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white text-blue-300 text-sm items-center gap-x-4 
                 ${index === activeTab ? "bg-light-white" : ""}`}
               onClick={() => handleTabClick(index)}
             >
