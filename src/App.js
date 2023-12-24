@@ -19,6 +19,7 @@ import  {EditProduct}  from './Pages/Product/editProduct.jsx';
 import AddOrder from './Pages/Add/addOrder.jsx';
 import Order from './Pages/Add/order.jsx';
 import EditOrder from './Pages/Add/editOrder.jsx';
+import EditUser from './Pages/User/editUser.jsx';
 import Image from './Pages/Image/Image.jsx';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <Route path='/'  Component={Login} > </Route>
         <Route path='/dashboard'  Component={Dashboad} > </Route>
         <Route path='/user'  Component={User} > </Route>
+        <Route path="/user/edit/:id"  Component={EditUser} > </Route>
         <Route path='/adduser'  Component={addUser} > </Route>
         <Route path='/product'  Component={Product} > </Route>
         <Route path='/addProd'  Component={AddProd} > </Route>
@@ -45,7 +47,7 @@ function App() {
       </Routes>
 
       <ToastContainer
-        position="bottom-center"
+        position="top-center"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

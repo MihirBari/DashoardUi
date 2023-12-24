@@ -20,7 +20,7 @@ const ImageGallery = () => {
     <>
 
     <div >
-      <h1 style={{ textAlign: 'center', fontWeight:'500' }}>Product Images</h1>
+      <h1 style={{ textAlign: 'center', fontWeight:'500' }} >Product Images</h1>
 
       <div className="flex flex-row flex-wrap justify-start">
         {images.map((image) => (

@@ -41,22 +41,14 @@ const TableOrder = () => {
   const handleDeleteClick = (row) => {
     console.log('Row:', row);
   
-    // List of size property names
     const sizeProperties = ['s', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl', 'xxxxxl', 'xxxxxxl'];
   
-    // Find the first valid size property
     const validSize = sizeProperties.find((size) => row[size] !== null && row[size] !== undefined);
   
-    // Check if a valid size and sizeValue are present
-    if (!validSize || row.Total_items === undefined) {
-      console.error('Invalid size or sizeValue in row:', row);
-      return;
-    }
-  
     const requestData = {
+      order_id: row.order_id,
       product_id: row.product_id,
-      size: validSize, // Use the correct property name
-      sizeValue: row.Total_items,
+      size: validSize,
     };
   
     axios({
@@ -68,8 +60,8 @@ const TableOrder = () => {
       },
     })
       .then((response) => {
-        console.log('Delete successful:', response.data);
-        window.location.reload();
+        console.log('Delete successful. Deleted order_id:', response.data.order_id);
+         window.location.reload();
         toast.success('Deleted Successfully');
       })
       .catch((error) => {
@@ -77,8 +69,6 @@ const TableOrder = () => {
         toast.error('Error deleting order');
       });
   };
-  
-  
 
     const columns = [
         {
@@ -93,10 +83,20 @@ const TableOrder = () => {
             sortable: true,
         },
         {
-            name: 'Product id',
+            name: 'Product Id',
             selector: (row) => row.product_id,
             sortable: true,
-        }, 
+            width: '130px',
+        },
+        {
+          name: 'Order id',
+          selector: (row) => row.order_id,
+          sortable: true,
+          width: '0px', 
+          style: {
+            display: 'none',  
+          },
+      }, 
         {
             name: 'Product Name',
             selector: (row) => row.product_name,
@@ -108,11 +108,6 @@ const TableOrder = () => {
             selector: (row) => row.amount_sold,
             sortable: true,
             width: '150px',
-        },
-        {
-            name: 'TotaL Items',
-            selector: (row) => row.Total_items,
-            sortable: true,
         },
         {
           name: 'Size',
@@ -139,15 +134,39 @@ const TableOrder = () => {
             sortable: true,
         },
         {
-          name: 'Created',
-          selector: (row) => row.created_at,
+          name: 'Created at',
+          selector: (row) => {
+            const date = new Date(row.created_at);
+            return date.toLocaleString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZone: 'IST',
+            });
+          },
           sortable: true,
-      },
+          width: '250px',
+        },
       {
-        name: 'Updated',
-        selector: (row) => row.update_at,
+        name: 'Updated at',
+        selector: (row) => {
+          const date = new Date(row.update_at);
+          return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'IST',
+          });
+        },
         sortable: true,
-    },
+        width: '250px',
+      },
         {
             name: 'Edit',
             cell: (row) => (

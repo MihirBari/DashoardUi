@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Logout from "../Logout"
+import Logout from "../Logout";
 
 const SideNavBar = () => {
   const [open, setOpen] = useState(true);
@@ -12,7 +12,6 @@ const SideNavBar = () => {
     { title: "Search", src: "Search", link: "/search" },
     { title: "Orders", src: "Chart", link: "/Customer" },
     { title: "Seller", src: "Setting", link: "/Seller" },
-    { title: "Logout", src: "Chat", link: "/" },
   ];
 
   const handleTabClick = (index) => {
@@ -21,7 +20,7 @@ const SideNavBar = () => {
 
   return (
     <div className="flex">
-       <div
+      <div
         className={`${
           open ? "w-72" : "w-20 "
         } bg-dark-purple h-screen p-5  pt-8 relative duration-300`}
@@ -52,22 +51,33 @@ const SideNavBar = () => {
         <ul className="pt-6">
           {Menus.map((Menu, index) => (
             <Link to={Menu.link}>
-             <li
-              key={index}
-              className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white text-blue-300 text-sm items-center gap-x-4 
+              <li
+                key={index}
+                className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white text-white-300 text-l items-center gap-x-6 
                 ${index === activeTab ? "bg-light-white" : ""}`}
-              onClick={() => handleTabClick(index)}
-            >
+                onClick={() => handleTabClick(index)}
+              >
                 <img src={require(`../../assets/${Menu.src}.png`)} alt="" />
                 <span
                   className={`${!open && "hidden"} origin-left duration-200`}
                 >
                   {Menu.title}
                 </span>
-            </li>
-              </Link>
+              </li>
+            </Link>
           ))}
         </ul>
+        <div className="flex rounded-md p-2 cursor-pointer hover:bg-light-white text-white-300 text-l items-center gap-x-6">
+          <span
+            className={`${
+              !open && "hidden"
+            } origin-left duration-200 flex items-center`}
+          >
+            <Logout />
+            <span className="ml-6">Logout</span>{" "}
+            {/* Adjust the margin as needed */}
+          </span>
+        </div>
       </div>
     </div>
   );

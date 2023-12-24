@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
 
 const AddUser = () => {
+  const navigate = useNavigate();
   const initialInputs = {
     name: "",
     email: "",
@@ -27,9 +28,10 @@ const AddUser = () => {
     e.preventDefault();
     try {
       // Send data to backend
-      const response = await axios.post(`${API_BASE_URL}/api/user/addUser`, inputs);
+      await axios.post(`${API_BASE_URL}/api/user/addUser`, inputs);
       setInputs(initialInputs);
       toast.success("User created successfully");
+      navigate("/user");
     } catch (err) {
       console.error(err);
       setError(err.response);
@@ -108,12 +110,14 @@ const AddUser = () => {
             </div>
             </div>
             <div className="flex justify-between items-center mt-4">
+            <Link to="/user">      
               <button
                 onClick={handleSubmit}
                 className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 Create
               </button>
+            </Link>
               <Link to="/user">
                 <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                   Back

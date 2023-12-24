@@ -18,7 +18,9 @@ const ProductDetails = ({ product }) => {
     product_price,
     Cost_price,
     product_type,
-    product_image,
+    product_image, 
+    other_cost,
+    Final_cost,
   } = product;
 
   const [imageSrc, setImageSrc] = useState("");
@@ -54,6 +56,8 @@ const ProductDetails = ({ product }) => {
         <p className="text-gray-600 mb-2">Description : {Description}</p>
         <p className="text-gray-800 font-semibold mb-2">product Price : ₹ {product_price}</p>
         <p className="text-gray-800 font-semibold mb-2">Cost price : ₹ {Cost_price}</p>
+        <p className="text-gray-800 font-semibold mb-2">Other price : ₹ {other_cost}</p>
+        <p className="text-gray-800 font-semibold mb-2">Total price : ₹ {Final_cost}</p>
         <p className="text-gray-600 mb-2">Type : {product_type}</p>
         <p className="text-gray-600 mb-2">Stocks : {Stock}</p>
 

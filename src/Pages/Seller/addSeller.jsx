@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
@@ -17,6 +17,7 @@ const AddUser = () => {
 
   const [inputs, setInputs] = useState(initialInputs);
   const [err, setError] = useState(null);
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -28,12 +29,22 @@ const AddUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const requiredFields = ["debitor_name", "debitor_Date", "debitor_Amount", "debitor_paid_by", "total_product", "other_cost"];
+
+    for (const field of requiredFields) {
+      if (!inputs[field]) {
+        toast.error(`Please fill in the ${field.replace(/_/g, ' ')} field.`);
+        return;
+      }
+    }
+
     try {
       // Send data to backend
-      const response = await axios.post(`${API_BASE_URL}/api/dealer/addDealer`, inputs);
+      await axios.post(`${API_BASE_URL}/api/dealer/addDealer`, inputs);
       setInputs(initialInputs);
       toast.success("User created successfully");
-      window.location.reload();
+     // window.location.reload();
+     navigate('/Seller')
     } catch (err) {
       console.error(err);
       setError(err.response);
@@ -97,7 +108,7 @@ const AddUser = () => {
               </label>
               <div className="mt-1 relative">
                 <input
-                  type="text"
+                  type="number"
                   name="debitor_Amount"
                   required
                   onChange={handleChange}
@@ -111,7 +122,7 @@ const AddUser = () => {
                 htmlFor="debitor_paid_by"
                 className="block text-sm font-medium text-gray-700"
               >
-                Paid By
+                Sold By
               </label>
               <div className="mt-1 relative">
                 <input
@@ -134,7 +145,7 @@ const AddUser = () => {
               </label>
               <div className="mt-1 relative">
                 <input
-                  type="text"
+                  type="number"
                   name="total_product"
                   autoComplete="current-password"
                   required
@@ -153,7 +164,7 @@ const AddUser = () => {
               </label>
               <div className="mt-1 relative">
                 <input
-                  type="text"
+                  type="number"
                   name="other_cost"
                   autoComplete="current-password"
                   required

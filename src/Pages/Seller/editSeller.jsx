@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
@@ -14,8 +14,11 @@ const EditSeller = () => {
     other_cost: "",
   };
 
-  const [inputs, setInputs] = useState(initialInputs);
   const { id } = useParams();
+  const [inputs, setInputs] = useState(initialInputs);
+  const [err, setError] = useState(null);
+  const navigate = useNavigate()
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setInputs((prev) => ({
@@ -24,17 +27,39 @@ const EditSeller = () => {
     }));
   };
 
+  useEffect(() => {
+    const fetchSeller = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/dealer/showOneDealer/${id}`);
+        const sellerData = response.data[0];
+
+        setInputs({
+          debitor_name: sellerData.debitor_name,
+          debitor_Date: sellerData.debitor_Date,
+          debitor_Amount: sellerData.debitor_Amount,
+          debitor_paid_by: sellerData.debitor_paid_by,
+          total_product: sellerData.total_product,
+          other_cost: sellerData.other_cost,
+        });
+      } catch (err) {
+        console.error(err);
+        setError(err.response);
+        toast.error("Failed to fetch seller details");
+      }
+    };
+
+    // Fetch data when the component mounts
+    fetchSeller();
+  }, [id]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
-        `${API_BASE_URL}/api/dealer/editDealer/${id}`,
-        inputs
-      );
+      await axios.put(`${API_BASE_URL}/api/dealer/editDealer/${id}`, inputs);
       setInputs(initialInputs);
       toast.success("Updated successfully");
-      
-      window.location.reload();
+      //window.location.reload();
+      navigate('/Seller')
     } catch (err) {
       console.error(err);
       toast.error("Failed to update seller");
@@ -45,124 +70,19 @@ const EditSeller = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Add Seller
+          Edit Seller
         </h2>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="debitor_name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Name
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    name="debitor_name"
-                    required
-                    onChange={handleChange}
-                    placeholder="Enter Seller Name"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="debitor_Date"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Date
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="date"
-                    name="debitor_Date"
-                    required
-                    onChange={handleChange}
-                    placeholder="Enter Date"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="debitor_Amount"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Amount
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type="text"
-                    name="debitor_Amount"
-                    required
-                    onChange={handleChange}
-                    placeholder="Enter Amount"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="debitor_paid_by"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Paid By
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type="text"
-                    name="debitor_paid_by"
-                    autoComplete="current-password"
-                    required
-                    onChange={handleChange}
-                    placeholder="Paid By"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="total_product"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Total Product
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type="text"
-                    name="total_product"
-                    autoComplete="current-password"
-                    required
-                    onChange={handleChange}
-                    placeholder="Total Product"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="other_cost"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Other Cost
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type="text"
-                    name="other_cost"
-                    autoComplete="current-password"
-                    required
-                    onChange={handleChange}
-                    placeholder="Other cost"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
+              {renderInput("debitor_name", "Name", "Enter Seller Name")}
+              {renderInput("debitor_Date", "Date", "Enter Date", "date")}
+              {renderInput("debitor_Amount", "Amount", "Enter Amount")}
+              {renderInput("debitor_paid_by", "Sold By", "Enter Paid By")}
+              {renderInput("total_product", "Total Product", "Enter Total Product")}
+              {renderInput("other_cost", "Other Cost", "Enter Other Cost")}
             </div>
             <div className="flex justify-between items-center mt-4">
               <button
@@ -182,6 +102,27 @@ const EditSeller = () => {
       </div>
     </div>
   );
+
+  function renderInput(name, label, placeholder, type = "text") {
+    return (
+      <div key={name}>
+        <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+        <div className="mt-1">
+          <input
+            type={type}
+            name={name}
+            required
+            onChange={handleChange}
+            placeholder={placeholder}
+            value={inputs[name]}
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+        </div>
+      </div>
+    );
+  }
 };
 
 export default EditSeller;

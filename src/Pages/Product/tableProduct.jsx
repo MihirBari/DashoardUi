@@ -3,14 +3,13 @@ import DataTable from "react-data-table-component";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import API_BASE_URL from "../../config";
-import ExportTable from "../ExportTable";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const ProdTable = () => {
   const [users, setUsers] = useState([]);
-  const [exportModalIsOpen, setExportModalIsOpen] = useState(false);
+
   const [searchText, setSearchText] = useState('');
   const navigate = useNavigate();
 
@@ -45,9 +44,7 @@ const ProdTable = () => {
       });
   };
 
-  const handleExportClick = () => {
-    setExportModalIsOpen(true);
-  };
+
 
   const handleViewClick = (row) => {
     navigate(`${row.product_id}`);
@@ -79,8 +76,8 @@ const ProdTable = () => {
       width: "150px",
     },
     {
-      name: "Cost Price",
-      selector: (row) => row.Cost_price,  
+      name: "Total Price",
+      selector: (row) => row.Final_cost, 
       sortable: true,
       width: "150px",
     },
@@ -90,28 +87,55 @@ const ProdTable = () => {
       sortable: true,
     },
     {
-      name: "Description",
-      selector: (row) => row.Description,
-      sortable: true,
-      width: "150px",
-    },
-   
-    {
       name: "Stock",
       selector: (row) => row.Stock,
       sortable: true,
     },
     {
-      name: "Created at",
-      selector: (row) => row.created_at,
+      name: "Created by",
+      selector: (row) => row.Created_by,
       sortable: true,
-      width: "250px",
+      width: '150px',
     },
     {
-      name: "Updated at",
-      selector: (row) => row.updated_at,
+      name: "Updated by",
+      selector: (row) => row.Updated_by,
       sortable: true,
-      width: "250px",
+      width: '150px',
+    },
+    {
+      name: 'Created at',
+      selector: (row) => {
+        const date = new Date(row.created_at);
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZone: 'IST',
+        });
+      },
+      sortable: true,
+      width: '250px',
+    },
+    {
+      name: 'Updated at',
+      selector: (row) => {
+        const date = new Date(row.updated_at);
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZone: 'IST',
+        });
+      },
+      sortable: true,
+      width: '250px',
     },
     {
       name: "Edit",
@@ -144,7 +168,7 @@ const ProdTable = () => {
   const filteredUsers = users.filter(user =>
     user.product_id.toString().includes(searchText) ||
     user.product_name.toLowerCase().includes(searchText.toLowerCase()) ||
-    user.Description.toLowerCase().includes(searchText.toLowerCase())
+    user.product_type.toLowerCase().includes(searchText.toLowerCase())
   );
 
 
@@ -176,21 +200,6 @@ const ProdTable = () => {
           selectAllRowsItem: false,
         }}
         subHeader
-        subHeaderComponent={
-          <div style={{ display: "flex", alignItems: "center" }}>
-            {/* <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={handleExportClick}
-            >
-              Export
-            </button> */}
-            <ExportTable
-              data={filteredUsers}
-              isOpen={exportModalIsOpen}
-              onRequestClose={() => setExportModalIsOpen(false)}
-            />
-          </div>
-        }
       />
     </div>
   );

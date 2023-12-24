@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 
 const AddProd = () => {
   const initialInputs = {
     product_id: "",
     product_name: "",
+    product_type: "",
     Description: "",
     s: 0,
     m: 0,
@@ -20,18 +22,32 @@ const AddProd = () => {
     xxxxxxl: 0,
     product_price: "",
     Cost_price: "",
-    product_type: "",
+    other_cost: "",
+    Final_cost: "",
     product_image: null,
   };
   const [inputs, setInputs] = useState(initialInputs);
   const [err, setError] = useState(null);
+  const navigate = useNavigate();
+  const { currentUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setInputs((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    setInputs((prev) => {
+      const newInputs = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
+
+      if (name === "Cost_price" || name === "other_cost") {
+        const costPrice = +newInputs.Cost_price || 0;
+        const otherCost = +newInputs.other_cost || 0;
+        newInputs.Final_cost = costPrice + otherCost;
+      }
+
+      return newInputs;
+    });
   };
 
   const handleImageChange = async (e) => {
@@ -66,13 +82,17 @@ const AddProd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // Make sure the image is uploaded before proceeding
-      if (!inputs.product_image) {
-        toast.error("Please upload an image");
+
+    const requiredFields = ["product_id", "product_name", "product_price", "Cost_price", "product_type", "product_image", "Description", "other_cost", "Final_cost"];
+
+    for (const field of requiredFields) {
+      if (!inputs[field]) {
+        toast.error(`Please fill in the ${field.replace(/_/g, ' ')} field.`);
         return;
       }
+    }
 
+    try {
       const product = {
         product_id: inputs.product_id,
         product_name: inputs.product_name,
@@ -89,10 +109,11 @@ const AddProd = () => {
         product_price: inputs.product_price,
         Cost_price: inputs.Cost_price,
         product_type: inputs.product_type,
+        other_cost: inputs.other_cost,
+        Final_cost: inputs.Final_cost,
         product_image: inputs.product_image,
+        userId: currentUser,
       };
-
-      console.log(product);
 
       await axios.post(
         `${API_BASE_URL}/api/prod/addProduct`,
@@ -105,7 +126,7 @@ const AddProd = () => {
       );
 
       setInputs(initialInputs);
-      window.location.reload();
+      navigate("/product");
       toast.success("Product added successfully");
     } catch (err) {
       console.error(err);
@@ -163,6 +184,24 @@ const AddProd = () => {
               </div>
               <div>
                 <label
+                  htmlFor="product_type"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Product Type
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    type="text"
+                    name="product_type"
+                    required
+                    onChange={handleChange}
+                    placeholder="Enter  Product Type"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
                   htmlFor="s"
                   className="block text-sm font-medium text-gray-700"
                 >
@@ -170,7 +209,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="s"
                     required
                     onChange={handleChange}
@@ -188,7 +227,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="m"
                     required
                     onChange={handleChange}
@@ -206,7 +245,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="l"
                     required
                     onChange={handleChange}
@@ -224,7 +263,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="xl"
                     required
                     onChange={handleChange}
@@ -242,7 +281,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="xxl"
                     required
                     onChange={handleChange}
@@ -260,7 +299,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="xxxl"
                     required
                     onChange={handleChange}
@@ -271,14 +310,14 @@ const AddProd = () => {
               </div>
               <div>
                 <label
-                  htmlFor="xxxxl"
+                  htmlFor="number"
                   className="block text-sm font-medium text-gray-700"
                 >
                   4xl
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="xxxxl"
                     required
                     onChange={handleChange}
@@ -296,7 +335,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="xxxxxl"
                     required
                     onChange={handleChange}
@@ -314,7 +353,7 @@ const AddProd = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="xxxxxxl"
                     required
                     onChange={handleChange}
@@ -328,11 +367,11 @@ const AddProd = () => {
                   htmlFor="product_price"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Product Price
+                  Selling Price
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="product_price"
                     required
                     onChange={handleChange}
@@ -346,11 +385,11 @@ const AddProd = () => {
                   htmlFor="Cost_price"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Cost Price
+                Product Cost Price
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="Cost_price"
                     required
                     onChange={handleChange}
@@ -361,18 +400,35 @@ const AddProd = () => {
               </div>
               <div>
                 <label
-                  htmlFor="product_type"
+                  htmlFor="other_cost"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Product Type
+                Other Cost Price
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
-                    name="product_type"
+                    type="number"
+                    name="other_cost"
                     required
                     onChange={handleChange}
-                    placeholder="Enter  Product Type"
+                    placeholder="Enter Product Price"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="Final_cost"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Final cost price
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    type="number"
+                    name="Final_cost"
+                    value={inputs.Final_cost}
+                    readOnly
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                 </div>
@@ -415,12 +471,14 @@ const AddProd = () => {
             </div>
             {/* Add more fields in a similar manner */}
             <div className="flex justify-between items-center mt-4">
+              <Link to="/product" >
               <button
                 onClick={handleSubmit}
                 className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 Create
               </button>
+              </Link>
               <Link to="/product">
                 <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                   Back

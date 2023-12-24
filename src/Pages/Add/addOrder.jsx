@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
@@ -23,6 +23,7 @@ const AddOrder = () => {
   const [selectedProductId, setSelectedProductId] = useState("");
 
   const [animatedComponents] = useState(makeAnimated());
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/prod/productId`)
@@ -40,12 +41,8 @@ const AddOrder = () => {
           ...prev,
           size: value,
         };
-      } else if (name === "sizeValue") {
-        return {
-          ...prev,
-          sizeValue: value,
-        };
-      } else {
+      }
+      else {
         return {
           ...prev,
           [name]: type === "checkbox" ? checked : value,
@@ -74,16 +71,25 @@ const AddOrder = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+ 
+    const requiredFields = ["creditor_name", "product_id", "amount_sold", "size", "amount_condition", "returned"];
+
+    for (const field of requiredFields) {
+      if (!inputs[field]) {
+        toast.error(`Please fill in the ${field.replace(/_/g, ' ')} field.`);
+        return;
+      }
+    }
+
     try {
       await axios.post(`${API_BASE_URL}/api/order/order`, {
         ...inputs,
         size: inputs.size,
-        sizeValue: inputs.sizeValue,
       });
 
       setInputs(initialInputs);
+      navigate("/Customer");
       toast.success("Order created successfully");
-      window.location.reload();
     } catch (err) {
       console.error(err);
       setError(err.response);
@@ -143,7 +149,7 @@ const AddOrder = () => {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    type="text"
+                    type="number"
                     name="amount_sold"
                     required
                     onChange={handleChange}
@@ -158,7 +164,7 @@ const AddOrder = () => {
                   htmlFor="amount_condition"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Amount Condition
+                  Amount Credited
                 </label>
                 <div className="mt-1 relative">
                   <select
@@ -171,7 +177,6 @@ const AddOrder = () => {
                       Yes
                     </option>
                     <option value="no">No</option>
-                    <option value="pending">Pending</option>
                   </select>
                 </div>
               </div>
@@ -202,23 +207,18 @@ const AddOrder = () => {
                     <option value="xxxxxl">5XL</option>
                     <option value="xxxxxxl">6XL</option>
                   </select>
-                  <input
-                    type="text"
-                    name="sizeValue"
-                    onChange={handleChange}
-                    placeholder="Enter size value"
-                    className="appearance-none block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
                 </div>
               </div>
             </div>
             <div className="flex justify-between items-center mt-4">
+              <Link to='/Customer'>
               <button
                 onClick={handleSubmit}
                 className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 Create
               </button>
+              </Link>
               <Link to="/Customer">
                 <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                   Back

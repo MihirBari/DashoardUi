@@ -46,10 +46,6 @@ const Users = () => {
         });
     };
   
-    const handleExportClick = () => {
-      setExportModalIsOpen(true);
-    };
-
     const columns = [
         {
             name: 'Sr. No',
@@ -63,10 +59,21 @@ const Users = () => {
             sortable: true,
         },
         {
-            name: 'Date',
-            selector: (row) => row.debitor_Date,
-            sortable: true,
-            width: "250px",
+          name: 'Date',
+          selector: (row) => {
+            const date = new Date(row.debitor_Date);
+            return date.toLocaleString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZone: 'IST',
+            });
+          },
+          sortable: true,
+          width: '250px',
         },
         {
             name: 'Amount',
@@ -74,7 +81,7 @@ const Users = () => {
             sortable: true,
         },
         {
-            name: 'Paid By',
+            name: 'Sold By',
             selector: (row) => row.debitor_paid_by,
             sortable: true,
         },
@@ -91,16 +98,38 @@ const Users = () => {
             width: "140px",
         },
         {
-          name: "Created at",
-          selector: (row) => row.created_at,
+          name: 'Created at',
+          selector: (row) => {
+            const date = new Date(row.created_at);
+            return date.toLocaleString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZone: 'IST',
+            });
+          },
           sortable: true,
-          width: "250px",
+          width: '250px',
         },
         {
-          name: "Updated at",
-          selector: (row) => row.updated_at,
+          name: 'Updated at',
+          selector: (row) => {
+            const date = new Date(row.updated_at);
+            return date.toLocaleString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZone: 'IST',
+            });
+          },
           sortable: true,
-          width: "250px",
+          width: '250px',
         },
         {
             name: 'Edit',

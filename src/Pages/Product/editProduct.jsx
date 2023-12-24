@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import SideNavBar from '../Sidebar/Navbar';
 import EditableProductDetails from './EditableProductDetails';
 import axios from 'axios';
 import API_BASE_URL from '../../config';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../../context/AuthContext';
 
 export const EditProduct = () => {
+  const { currentUser } = useContext(AuthContext);
   const [product, setProduct] = useState({
     product_name: "",
     Description: "",
@@ -21,11 +23,13 @@ export const EditProduct = () => {
     xxxxxxl: 0,
     product_price: "",
     Cost_price: "",
+    other_cost:"",
+    Final_cost:"",
     product_type: "",
   });
 
   const { product_id } = useParams();
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -47,6 +51,8 @@ export const EditProduct = () => {
             xxxxxxl: productData.xxxxxxl || 0,
             product_price: productData.product_price || "",
             Cost_price: productData.Cost_price || "",
+            other_cost: productData.other_cost || "",
+            Final_cost: productData.Final_cost || "",
             product_type: productData.product_type || "",
           });
         } else {
@@ -64,10 +70,11 @@ export const EditProduct = () => {
     try {
       const response = await axios.put(
         `${API_BASE_URL}/api/prod/updateProduct/${product_id}`,
-        editedProduct
+        { ...editedProduct, userId: currentUser },
       );
 
       console.log('Response from backend:', response.data);
+      navigate("/product");
       toast.success('Edited completely');
       console.log('Updated product:', editedProduct);
     } catch (error) {

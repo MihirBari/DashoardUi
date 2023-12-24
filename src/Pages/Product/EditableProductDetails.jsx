@@ -65,6 +65,8 @@ const EditableProductDetails = ({ product, onSave }) => {
           xxxxxxl: Number(editedProduct.xxxxxxl),
           Cost_price: Number(editedProduct.Cost_price),
           product_price: Number(editedProduct.product_price),
+          other_cost: Number(editedProduct.other_cost),
+          Final_cost: Number(editedProduct.Final_cost),
         },
       ],
     };
@@ -202,7 +204,7 @@ const EditableProductDetails = ({ product, onSave }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700">Product Price:</label>
               <input
-                type="text"
+                type="number"
                 name="product_price"
                 value={editedProduct.product_price}
                 onChange={handleInputChange}
@@ -213,7 +215,7 @@ const EditableProductDetails = ({ product, onSave }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700">Cost Price:</label>
               <input
-                type="text"
+                type="number"
                 name="Cost_price"
                 value={editedProduct.Cost_price}
                 onChange={handleInputChange}
@@ -221,6 +223,28 @@ const EditableProductDetails = ({ product, onSave }) => {
               />
             </div>
   
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Other Cost Price</label>
+              <input
+                type="number"
+                name="other_cost"
+                value={editedProduct.other_cost}
+                onChange={handleInputChange}
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Final cost price:</label>
+              <input
+                type="number"
+                name="Final_cost"
+                value={editedProduct.Final_cost}
+                onChange={handleInputChange}
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">Product Type:</label>
               <input

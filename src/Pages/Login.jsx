@@ -2,39 +2,43 @@ import React, { useState, useContext } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [visible, setVisible] = useState(false);
-
     const [inputs, setInputs] = useState({
-        email: "",
-        password: "",
-        rememberMe: false, 
+      email: '',
+      password: '',
+      rememberMe: false,
     });
     const [err, setError] = useState(null);
-
     const { login } = useContext(AuthContext);
-
+    const navigate = useNavigate()
+  
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setInputs((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
+      const { name, value, type, checked } = e.target;
+      setInputs((prev) => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
     };
-
+  
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await login(inputs);
-            toast.success("Welcome")
-        } catch (err) {
-            console.log(err);
-            setError(err.response);
-            toast.error("Email or Password wrong");
+      e.preventDefault();
+      try {
+        await login(inputs);
+        const token = localStorage.getItem('user');
+        if (token) {
+            navigate("/dashboard")
+          toast.success('Welcome');
         }
+      } catch (err) {
+        console.log(err);
+        setError(err.response);
+        toast.error('Email or Password wrong');
+      }
     };
-
+  
     return (
         <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">

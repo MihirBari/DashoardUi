@@ -1,34 +1,37 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import "./orders.css"
 import DataTable from 'react-data-table-component';
-import API_BASE_URL from "../../config";
 import { MdEdit, MdDelete  } from "react-icons/md";
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import API_BASE_URL from "../../config";
+import { useNavigate } from 'react-router-dom';
 
 const Users = () => {
-    const [user, setUser] = useState([]);
-
+    const [users, setUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const navigate = useNavigate()
+     
     useEffect(() => {
-        const fetchOrders = async () => {
+        const fetchUsers = async () => {
             try {
                 const response = await axios.get(`${API_BASE_URL}/api/user/userData`);
-                setUser(response.data);
-                console.log(response.data);
+                setUsers(response.data);
+                setFilteredUsers(response.data);
             } catch (err) {
-                console.error('Error fetching orders:', err);
+                console.error('Error fetching users:', err);
             }
         };
 
-        fetchOrders();
+        fetchUsers();
     }, []);
 
-    const handleEditClick = (row) => {
-        console.log('Edit clicked for:', row);
+    const handleEditClick = (userId) => {
+        navigate(`edit/${userId.id}`)
     };
 
     const handleDeleteClick = (userId) => {
-        const idToDelete = userId.id; 
+        const idToDelete = userId.id;
         console.log('Deleting user with ID:', idToDelete);
       
         axios.delete(`${API_BASE_URL}/api/user/delete`, { data: { id: idToDelete } })
@@ -40,7 +43,15 @@ const Users = () => {
           .catch(error => {
             console.error('Error deleting:', error);
           });
-      };
+    };
+
+    const handleSearch = (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredData = users.filter(user => 
+            user.name.toLowerCase().includes(searchTerm) || user.email.toLowerCase().includes(searchTerm)
+        );
+        setFilteredUsers(filteredData);
+    };
 
     const columns = [
         {
@@ -60,15 +71,39 @@ const Users = () => {
             sortable: true,
         },
         {
-            name: 'created at',
-            selector: (row) => row.created_at,
+            name: 'Created at',
+            selector: (row) => {
+              const date = new Date(row.created_at);
+              return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'IST',
+              });
+            },
             sortable: true,
-        },
-        {
-            name: 'updated at',
-            selector: (row) => row.updated_at,
+            width: '250px',
+          },
+          {
+            name: 'Updated at',
+            selector: (row) => {
+              const date = new Date(row.updated_at);
+              return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'IST',
+              });
+            },
             sortable: true,
-        },
+            width: '250px',
+          },
         {
             name: 'Edit',
             cell: (row) => (
@@ -87,10 +122,16 @@ const Users = () => {
 
     return (
         <div className='order'>
+            <input
+                type="text"
+                placeholder="Search "
+                onChange={handleSearch}
+                className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+            />
             <DataTable
                 className='dataTable'
                 columns={columns}
-                data={user}
+                data={filteredUsers}
                 fixedHeader
                 fixedHeaderScrollHeight='450px'
                 striped
@@ -99,6 +140,5 @@ const Users = () => {
         </div>
     );
 };
-
 
 export default Users;
