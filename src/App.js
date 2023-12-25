@@ -27,7 +27,7 @@ function App() {
    <>
       <Routes>
         <Route path='/'  Component={Login} > </Route>
-        <Route path='/dashboard'  Component={Dashboad} > </Route>
+        {/* <Route path='/dashboard'  Component={Dashboad} > </Route> */}
         <Route path='/user'  Component={User} > </Route>
         <Route path="/user/edit/:id"  Component={EditUser} > </Route>
         <Route path='/adduser'  Component={addUser} > </Route>

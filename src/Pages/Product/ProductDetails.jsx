@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 
 const ProductDetails = ({ product }) => {
@@ -18,21 +21,28 @@ const ProductDetails = ({ product }) => {
     product_price,
     Cost_price,
     product_type,
-    product_image, 
+    product_image,
     other_cost,
     Final_cost,
   } = product;
 
-  const [imageSrc, setImageSrc] = useState("");
+  const [imageSrcList, setImageSrcList] = useState([]);
 
   useEffect(() => {
-    if (product_image.startsWith("data:image")) {
-     
-      setImageSrc(product_image);
+    console.log("Product Images:", product_image);
+    
+    if (Array.isArray(product_image)) {
+      const images = product_image.map((imagePath) => {
+        // If imagePath starts with "data:image", assume it's a base64-encoded image
+        // Otherwise, append the base64 prefix
+        return imagePath.startsWith("data:image") ? imagePath : `data:image/jpeg;base64,${imagePath}`;
+      });
+  
+      console.log("Image Src List:", images);
+      setImageSrcList(images);
     } else {
-     
-      const base64Image = `data:image/jpeg;base64,${product_image}`;
-      setImageSrc(base64Image);
+      // Handle the case when product_image is not an array
+      console.error("Product images are not in the expected format:", product_image);
     }
   }, [product_image]);
 
@@ -48,18 +58,44 @@ const ProductDetails = ({ product }) => {
     { label: "XXXXXXL", quantity: xxxxxxl },
   ];
 
+  const settings = {
+   
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
     <div className="flex flex-col justify-center items-center mt-8">
       <div className="max-w-md w-full bg-white p-4 rounded-lg shadow-md">
-        <img style={{ width: '150px', height: '150px', margin: '10px' }} src={imageSrc} alt="" />
+        <Slider {...settings}>
+          {imageSrcList.map((src, index) => (
+            <div key={index}>
+              <img
+                style={{ width: "50%", height: "50%", marginLeft:"80px" }}
+                src={src}
+                alt={`Product ${index + 1}`}
+              />
+            </div>
+          ))}
+        </Slider>
         <h2 className="text-xl font-semibold mb-2">Name : {product_name}</h2>
-        <p className="text-gray-600 mb-2">Description : {Description}</p>
-        <p className="text-gray-800 font-semibold mb-2">product Price : ₹ {product_price}</p>
-        <p className="text-gray-800 font-semibold mb-2">Cost price : ₹ {Cost_price}</p>
-        <p className="text-gray-800 font-semibold mb-2">Other price : ₹ {other_cost}</p>
-        <p className="text-gray-800 font-semibold mb-2">Total price : ₹ {Final_cost}</p>
-        <p className="text-gray-600 mb-2">Type : {product_type}</p>
-        <p className="text-gray-600 mb-2">Stocks : {Stock}</p>
+        <p className="text-gray-800 font-semibold mb-2">Description : {Description}</p>
+        <p className="text-gray-800 font-semibold mb-2">
+          product Price : ₹ {product_price}
+        </p>
+        <p className="text-gray-800 font-semibold mb-2">
+          Cost price : ₹ {Cost_price}
+        </p>
+        <p className="text-gray-800 font-semibold mb-2">
+          Other price : ₹ {other_cost}
+        </p>
+        <p className="text-gray-800 font-semibold mb-2">
+          Total price : ₹ {Final_cost}
+        </p>
+        <p className="text-gray-800 font-semibold mb-2">Type : {product_type}</p>
+        <p className="ext-gray-800 font-semibold mb-2">Stocks : {Stock}</p>
 
         <div className="flex items-center">
           <p className="text-gray-600 mr-2">Sizes:</p>

@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
 import Select from "react-select"; // Import the Select component
-import makeAnimated from "react-select/animated"; 
-
+import makeAnimated from "react-select/animated";
 
 const AddOrder = () => {
   const initialInputs = {
@@ -13,6 +12,7 @@ const AddOrder = () => {
     product_id: "",
     amount_sold: "",
     size: "",
+    paid_by: "",
     amount_condition: "yes",
     returned: "No",
   };
@@ -41,8 +41,7 @@ const AddOrder = () => {
           ...prev,
           size: value,
         };
-      }
-      else {
+      } else {
         return {
           ...prev,
           [name]: type === "checkbox" ? checked : value,
@@ -71,12 +70,19 @@ const AddOrder = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
-    const requiredFields = ["creditor_name", "product_id", "amount_sold", "size", "amount_condition", "returned"];
+
+    const requiredFields = [
+      "creditor_name",
+      "product_id",
+      "amount_sold",
+      "size",
+      "amount_condition",
+      "returned",
+    ];
 
     for (const field of requiredFields) {
       if (!inputs[field]) {
-        toast.error(`Please fill in the ${field.replace(/_/g, ' ')} field.`);
+        toast.error(`Please fill in the ${field.replace(/_/g, " ")} field.`);
         return;
       }
     }
@@ -127,18 +133,28 @@ const AddOrder = () => {
                 </div>
               </div>
 
-              <div className="mt-1 relative">
-      <Select
-        components={animatedComponents}
-        isClearable
-        isSearchable
-        options={productIds.map((productId) => ({ value: productId, label: productId }))}
-        onChange={(selectedOption) => {
-          handleProductChange(selectedOption ? selectedOption.value : "");
-        }}
-        placeholder="Product ID"
-      />
-    </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                Product ID
+                </label>
+                <div className="mt-1 relative">
+                  <Select
+                    components={animatedComponents}
+                    isClearable
+                    isSearchable
+                    options={productIds.map((productId) => ({
+                      value: productId,
+                      label: productId,
+                    }))}
+                    onChange={(selectedOption) => {
+                      handleProductChange(
+                        selectedOption ? selectedOption.value : ""
+                      );
+                    }}
+                    placeholder="Product ID"
+                  />
+                </div>
+              </div>
 
               <div>
                 <label
@@ -177,9 +193,30 @@ const AddOrder = () => {
                       Yes
                     </option>
                     <option value="no">No</option>
+                    <option value="yes Returned">Yes Returned</option>
+                    <option value="no Returned">No Returned</option>
                   </select>
                 </div>
               </div>
+              <div>
+              <label
+                htmlFor="paid_by"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Sold By
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  type="text"
+                  name="paid_by"
+                  autoComplete="current-password"
+                  required
+                  onChange={handleChange}
+                  placeholder="Paid By"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+            </div>
               <div>
                 <label
                   htmlFor="Size"
@@ -211,13 +248,13 @@ const AddOrder = () => {
               </div>
             </div>
             <div className="flex justify-between items-center mt-4">
-              <Link to='/Customer'>
-              <button
-                onClick={handleSubmit}
-                className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-              >
-                Create
-              </button>
+              <Link to="/Customer">
+                <button
+                  onClick={handleSubmit}
+                  className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Create
+                </button>
               </Link>
               <Link to="/Customer">
                 <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">

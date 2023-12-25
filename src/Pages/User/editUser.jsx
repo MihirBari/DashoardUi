@@ -75,7 +75,7 @@ const EditUser = () => {
                 {renderInput("name", "Name", "Enter your Name")}
               </div>
               <div>
-                {renderInput("email", "Email", "Enter your E-mail")}
+                {renderInput("email", "User Name", "Enter your E-mail")}
               </div>
               <div>
                 {renderInput("password", "Password", "Enter your Password")}

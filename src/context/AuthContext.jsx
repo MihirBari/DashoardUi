@@ -16,7 +16,7 @@ export const AuthContextProvider = ({ children }) => {
     try {
       const userId = res.data.data;
       setCurrentUser(userId);
-      navigate('/dashboard')
+      navigate('/Product')
     } catch (err) {
       console.log(err)
     }

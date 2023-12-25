@@ -4,13 +4,11 @@ import "./orders.css"
 import DataTable from 'react-data-table-component';
 import API_BASE_URL from "../../config";
 import { MdDelete, MdEdit  } from "react-icons/md";
-import ExportTable from '../ExportTable';
 import {  useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const TableOrder = () => {
   const [users, setUsers] = useState([]);
-  const [exportModalIsOpen, setExportModalIsOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const navigate = useNavigate();
 
@@ -75,28 +73,22 @@ const TableOrder = () => {
             name: 'Sr. No',
             selector: (_, index) => index + 1,
             sortable: false,
-            width: '80px',
         },
         {
             name: 'Name',
             selector: (row) => row.creditor_name,
             sortable: true,
-        },
+        }, {
+          name: 'Order id',
+          selector: (row) => row.order_id,
+          sortable: true,
+      },
         {
             name: 'Product Id',
             selector: (row) => row.product_id,
             sortable: true,
             width: '130px',
-        },
-        {
-          name: 'Order id',
-          selector: (row) => row.order_id,
-          sortable: true,
-          width: '0px', 
-          style: {
-            display: 'none',  
-          },
-      }, 
+        }, 
         {
             name: 'Product Name',
             selector: (row) => row.product_name,
@@ -109,6 +101,12 @@ const TableOrder = () => {
             sortable: true,
             width: '150px',
         },
+        {
+          name: 'Sold By',
+          selector: (row) => row.paid_by,
+          sortable: true,
+          width: '150px',
+      },
         {
           name: 'Size',
           selector: (row) => {
@@ -123,7 +121,7 @@ const TableOrder = () => {
           sortable: true,
         },
         {
-            name: 'Amount Condition',
+            name: 'Amount Creadited',
             selector: (row) => row.amount_condition, 
             sortable: true,
             width: '150px',
@@ -182,6 +180,7 @@ const TableOrder = () => {
             ),
             button: true,
         },
+        
     ];
 
     const CustomHeader = ({ column }) => (
@@ -227,22 +226,7 @@ const TableOrder = () => {
             noRowsPerPage: false,
             selectAllRowsItem: false,
           }}
-          subHeader
-          subHeaderComponent={
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {/* <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={handleExportClick}
-              >
-                Export
-              </button> */}
-              <ExportTable
-                data={filteredUsers}
-                isOpen={exportModalIsOpen}
-                onRequestClose={() => setExportModalIsOpen(false)}
-              />
-            </div>
-          }
+        
         />
       </div>
     );

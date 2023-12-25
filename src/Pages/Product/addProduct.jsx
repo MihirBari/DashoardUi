@@ -51,10 +51,13 @@ const AddProd = () => {
   };
 
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
+    const files = e.target.files;
     const formData = new FormData();
-    formData.append("image", file);
-
+  
+    for (let i = 0; i < files.length; i++) {
+      formData.append("images", files[i]);
+    }
+  
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/prod/upload`,
@@ -65,18 +68,23 @@ const AddProd = () => {
           },
         }
       );
-
+  
       if (response.status === 200) {
+        // Assuming the API response contains an array of image paths
+        const imagePaths = response.data.imagePaths;
+  
         setInputs((prev) => ({
           ...prev,
-          product_image: response.data.imagePath,
+          // Assuming product_image is an array to store multiple image paths
+          product_image: imagePaths,
         }));
-        toast.success("Image uploaded successfully");
+  
+        toast.success("Images uploaded successfully");
       } else {
-        console.error("Failed to upload image");
+        console.error("Failed to upload images");
       }
     } catch (error) {
-      console.error("Error uploading image: " + error.message);
+      console.error("Error uploading images: " + error.message);
     }
   };
 

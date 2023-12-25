@@ -11,6 +11,7 @@ const EditOrder = () => {
     size: "",
     amount_condition: "yes",
     returned: "No",
+    paid_by:"",
   };
 
   const { product_id } = useParams();
@@ -31,6 +32,7 @@ const EditOrder = () => {
           size: orderData.size,
           amount_condition: orderData.amount_condition || "yes",
           returned: orderData.returned || "No",
+          paid_by:orderData.paid_by,
         });
       } catch (err) {
         console.error(err);
@@ -92,10 +94,15 @@ const EditOrder = () => {
                 {renderInput("amount_sold", "Amount Sold", "Enter Amount Sold")}
               </div>
               <div>
+                {renderInput("paid_by", "Sold By", "Sold By")}
+              </div>
+              <div>
                 {renderSelect("amount_condition", "Amount Credited", [
                   { value: "", label: "Select an option" },
                   { value: "yes", label: "Yes" },
                   { value: "no", label: "No" },
+                  { value: "yes Returned", label: "Yes Returned" },
+                  { value: "no Returned", label: "No Returned" },
                 ])}
               </div>
               <div>

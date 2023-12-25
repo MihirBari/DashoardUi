@@ -4,13 +4,11 @@ import "./orders.css"
 import DataTable from 'react-data-table-component';
 import API_BASE_URL from "../../config";
 import { MdEdit, MdDelete  } from "react-icons/md";
-import ExportTable from '../ExportTable';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
-    const [exportModalIsOpen, setExportModalIsOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const navigate = useNavigate();
     useEffect(() => {
@@ -189,22 +187,7 @@ const Users = () => {
             noRowsPerPage: false,
             selectAllRowsItem: false,
           }}
-          subHeader
-          subHeaderComponent={
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {/* <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={handleExportClick}
-              >
-                Export
-              </button> */}
-              <ExportTable
-                data={filteredUsers}
-                isOpen={exportModalIsOpen}
-                onRequestClose={() => setExportModalIsOpen(false)}
-              />
-            </div>
-          }
+          
         />
       </div>
     );

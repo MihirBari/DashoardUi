@@ -66,7 +66,7 @@ const Users = () => {
             sortable: true,
         },
         {
-            name: 'Email',
+            name: 'User Name',
             selector: (row) => row.email,
             sortable: true,
         },

@@ -70,13 +70,13 @@ const ProdTable = () => {
       width: "150px",
     },
     {
-      name: "Product Price",
+      name: "Selling Price",
       selector: (row) => row.product_price, 
       sortable: true,
       width: "150px",
     },
     {
-      name: "Total Price",
+      name: "Cost Price",
       selector: (row) => row.Final_cost, 
       sortable: true,
       width: "150px",
@@ -199,7 +199,7 @@ const ProdTable = () => {
           noRowsPerPage: false,
           selectAllRowsItem: false,
         }}
-        subHeader
+        
       />
     </div>
   );

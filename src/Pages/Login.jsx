@@ -29,7 +29,7 @@ const Login = () => {
         await login(inputs);
         const token = localStorage.getItem('user');
         if (token) {
-            navigate("/dashboard")
+            navigate("/Product")
           toast.success('Welcome');
         }
       } catch (err) {
