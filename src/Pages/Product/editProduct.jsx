@@ -76,7 +76,7 @@ export const EditProduct = () => {
       console.log('Response from backend:', response.data);
       navigate("/product");
       toast.success('Edited completely');
-      console.log('Updated product:', editedProduct);
+      //console.log('Updated product:', editedProduct);
     } catch (error) {
       console.error('Error updating product:', error);
     }

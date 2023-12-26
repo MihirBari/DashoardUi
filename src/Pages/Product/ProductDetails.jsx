@@ -33,9 +33,7 @@ const ProductDetails = ({ product }) => {
     
     if (Array.isArray(product_image)) {
       const images = product_image.map((imagePath) => {
-        // If imagePath starts with "data:image", assume it's a base64-encoded image
-        // Otherwise, append the base64 prefix
-        return imagePath.startsWith("data:image") ? imagePath : `data:image/jpeg;base64,${imagePath}`;
+        return imagePath; // Assuming imagePath already contains the "data:image" prefix
       });
   
       console.log("Image Src List:", images);

@@ -21,7 +21,7 @@ const EditableProductDetails = ({ product, onSave }) => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("new_product_image", file);
   
     try {
       const response = await axios.post(
@@ -35,9 +35,10 @@ const EditableProductDetails = ({ product, onSave }) => {
       );
   
       if (response.status === 200) {
+        // Update the product with the new image information
         setEditedProduct((prev) => ({
           ...prev,
-          product_image: response.data.imagePath,
+          new_product_image: response.data.public_id,
         }));
         toast.success("Image uploaded successfully");
       } else {
