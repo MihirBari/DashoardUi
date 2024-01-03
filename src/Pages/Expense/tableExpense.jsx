@@ -7,14 +7,14 @@ import { MdEdit, MdDelete  } from "react-icons/md";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
-const Users = () => {
+const TableExpense = () => {
     const [users, setUsers] = useState([]);
     const [searchText, setSearchText] = useState('');
     const navigate = useNavigate();
     useEffect(() => {
       const fetchOrders = async () => {
         try {
-          const response = await axios.get(`${API_BASE_URL}/api/dealer/showDealer`);
+          const response = await axios.get(`${API_BASE_URL}/api/expense/showExpense`);
           setUsers(response.data);
           console.log(response.data);
         } catch (err) {
@@ -33,7 +33,7 @@ const Users = () => {
       const idToDelete = userId.id; 
       console.log('Deleting user with ID:', idToDelete);
     
-      axios.delete(`${API_BASE_URL}/api/dealer/delete`, { data: { id: idToDelete } })
+      axios.delete(`${API_BASE_URL}/api/expense/delete`, { data: { id: idToDelete } })
         .then(response => {
           console.log('Delete successful:', response.data);
           toast.success("Deleted Successfully");
@@ -53,13 +53,13 @@ const Users = () => {
         },
         {
             name: 'Name',
-            selector: (row) => row.debitor_name,
+            selector: (row) => row.name,
             sortable: true,
         },
         {
           name: 'Date',
           selector: (row) => {
-            const date = new Date(row.debitor_Date);
+            const date = new Date(row.date);
             return date.toLocaleString('en-US', {
               year: 'numeric',
               month: '2-digit',
@@ -75,44 +75,26 @@ const Users = () => {
         },
         {
             name: 'Amount',
-            selector: (row) => row.debitor_Amount,
+            selector: (row) => row.amount,
             sortable: true,
         },
         {
             name: 'Paid By',
-            selector: (row) => row.debitor_paid_by,
+            selector: (row) => row.paid_by,
             sortable: true,
-        },
-        {
-          name: 'Paid Status',
-          selector: (row) => row.paid_status,
-          sortable: true,
-          width: "140px",
-      },
-        {
-            name: 'Total Product',
-            selector: (row) => row.total_product,
-            sortable: true,
-            width: "140px",
-        },
-        {
-          name: 'Product Type',
-          selector: (row) => row.product_type,
-          sortable: true,
-          width: "140px",
-      },
-        {
-            name: 'Other Cost',
-            selector: (row) => row.other_cost,
-            sortable: true,
-            width: "140px",
         },
         {
           name: 'Remark',
-          selector: (row) => row.remark,
+          selector: (row) => row.remarks,
           sortable: true,
           width: "140px",
       },
+        {
+            name: 'Paid Status',
+            selector: (row) => row.paid_status,
+            sortable: true,
+            width: "140px",
+        },
         {
           name: 'Created at',
           selector: (row) => {
@@ -175,7 +157,7 @@ const Users = () => {
     }));
 
     const filteredUsers = users.filter(user =>
-      user.debitor_name.toString().includes(searchText) 
+      user.name.toString().includes(searchText) 
     );
   
 
@@ -212,4 +194,4 @@ const Users = () => {
 };
 
 
-export default Users;
+export default TableExpense;

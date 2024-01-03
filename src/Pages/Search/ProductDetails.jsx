@@ -66,7 +66,7 @@ const ProductDetails = ({ product }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center mt-2">
+    <div className="flex flex-col justify-center items-center mt-2 ">
     <div className="flex flex-col md:flex-row justify-center items-center mt-8">
       <div className="max-w-md w-full md:w-1/2  p-4 rounded-lg ">
         <Slider {...settings}>
@@ -83,7 +83,7 @@ const ProductDetails = ({ product }) => {
       </div>
 
       <div className="max-w-md w-full md:w-1/2  p-4 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Name : <span>{product_name} </span></h2>
+        <h2 className="text-xl font-semibold mb-2">Name : {product_name}</h2>
         <p className="text-gray-800 font-semibold mb-2">Description : {Description}</p>
         <p className="text-gray-800 font-semibold mb-2">
           product ID : {product_id}
@@ -121,12 +121,12 @@ const ProductDetails = ({ product }) => {
         </div>
       </div>
     </div>
-
-    <Link to="/product">
-      <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 ">
+    <Link to="/Search">
+      <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
         Back
       </button>
     </Link>
+
   </div>
   );
 };

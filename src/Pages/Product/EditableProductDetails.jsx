@@ -19,35 +19,48 @@ const EditableProductDetails = ({ product, onSave }) => {
   };
 
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("new_product_image", file);
-  
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/api/prod/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-  
-      if (response.status === 200) {
-        // Update the product with the new image information
-        setEditedProduct((prev) => ({
-          ...prev,
-          new_product_image: response.data.public_id,
-        }));
-        toast.success("Image uploaded successfully");
-      } else {
-        console.error("Failed to upload image");
-      }
-    } catch (error) {
-      console.error("Error uploading image: " + error.message);
+    const files = e.target.files;
+    
+    if (!files || files.length === 0) {
+      console.error("No files selected");
+      return;
     }
-  };
+
+    try {
+      const formData = new FormData();
+        
+      for (let i = 0; i < files.length; i++) {
+        formData.append("images", files[i]);
+      }
+
+
+        const response = await axios.post(
+            `${API_BASE_URL}/api/prod/upload`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+
+        if (response.status === 200) {
+            // Update the product with the new image information
+            const imagePaths = response.data.imagePaths;
+
+            setEditedProduct((prev) => ({
+                ...prev,
+                product_image: imagePaths,
+            }));
+            toast.success("Image uploaded successfully");
+        } else {
+            console.error("Failed to upload image");
+        }
+    } catch (error) {
+        console.error("Error uploading image: " + error.message);
+    }
+};
+
 
   const handleSaveClick = () => {
     // Convert relevant fields to numbers

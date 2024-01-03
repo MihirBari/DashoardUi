@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
+import DataTable , { createTheme } from "react-data-table-component";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import API_BASE_URL from "../../config";
@@ -44,7 +44,27 @@ const ProdTable = () => {
       });
   };
 
-
+  createTheme('solarized', {
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#FFFFFF',
+    },
+    background: {
+      default: 'rgba(59,139,246,1)',
+    },
+    context: {
+      background: '#cb4b16',
+      text: '#FFFFFF',
+    },
+    divider: {
+      default: '#073642',
+    },
+    action: {
+      button: 'rgba(0,0,0,.54)',
+      hover: 'rgba(59,139,246,1)',
+      disabled: 'rgba(0,0,0,.12)',
+    },
+  }, 'light');
 
   const handleViewClick = (row) => {
     navigate(`${row.product_id}`);
@@ -62,6 +82,7 @@ const ProdTable = () => {
       selector: (row) => row.product_id,
       sortable: true,
       width: "110px",
+      
     },
     {
       name: "Product Name",
@@ -171,6 +192,14 @@ const ProdTable = () => {
     user.product_type.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const customStyles = {
+   
+    headCells: {
+        style: {
+          color: "rgb(255 255 255)"
+        },
+    }
+};
 
   
   return (
@@ -187,10 +216,12 @@ const ProdTable = () => {
         columns={modifiedColumns}
         data={filteredUsers}
         fixedHeader
+        customStyles={customStyles} 
         fixedHeaderScrollHeight="450px"
         striped
+        theme="solarized"
         pagination
-        highlightOnHover
+       
         paginationPerPage={10}
         paginationRowsPerPageOptions={[10, 20, 30]}
         paginationComponentOptions={{

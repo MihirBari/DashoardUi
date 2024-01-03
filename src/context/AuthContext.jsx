@@ -22,10 +22,14 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const logout = async (inputs) => {
-    await axios.get(`${API_BASE_URL}/api/user/logout`);
-    setCurrentUser(null);
-
+  const logout = async () => {
+    try {
+      await axios.get(`${API_BASE_URL}/api/user/logout`);
+      setCurrentUser(null);
+      navigate('/'); // Redirect to the home page or another appropriate route
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {

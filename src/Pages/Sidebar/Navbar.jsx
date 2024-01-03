@@ -12,6 +12,7 @@ const SideNavBar = () => {
     { title: "Search", src: "Search", link: "/search" },
     { title: "Orders", src: "Chart", link: "/Customer" },
     { title: "Seller", src: "Setting", link: "/Seller" },
+    { title: "Expense", src: "Setting", link: "/Expense" },
   ];
 
   const handleTabClick = (index) => {
@@ -23,7 +24,7 @@ const SideNavBar = () => {
       <div
         className={`${
           open ? "w-72" : "w-20 "
-        } bg-dark-purple h-screen p-5  pt-8 relative duration-300`}
+        } bg-blue-500 h-screen p-5 pt-8 relative duration-300`}
       >
         <img
           src={require("../../assets/control.png")}
@@ -45,15 +46,14 @@ const SideNavBar = () => {
               !open && "scale-0"
             }`}
           >
-            Dashoards
+            Dashboards
           </h1>
         </div>
         <ul className="pt-6">
           {Menus.map((Menu, index) => (
-            <Link to={Menu.link}>
+            <Link to={Menu.link} key={index}>
               <li
-                key={index}
-                className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white text-white-300 text-l items-center gap-x-6 
+                className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white text-white text-l items-center gap-x-6 
                 ${index === activeTab ? "bg-light-white" : ""}`}
                 onClick={() => handleTabClick(index)}
               >
@@ -67,15 +67,14 @@ const SideNavBar = () => {
             </Link>
           ))}
         </ul>
-        <div className="flex rounded-md p-2 cursor-pointer hover:bg-light-white text-white-300 text-l items-center gap-x-6">
+        <div className="flex rounded-md p-2 cursor-pointer hover:bg-light-white text-white text-l items-center gap-x-6">
           <span
             className={`${
               !open && "hidden"
             } origin-left duration-200 flex items-center`}
           >
             <Logout />
-            <span className="ml-6">Logout</span>{" "}
-            {/* Adjust the margin as needed */}
+            <span className="ml-6">Logout</span>
           </span>
         </div>
       </div>

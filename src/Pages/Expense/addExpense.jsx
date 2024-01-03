@@ -5,17 +5,14 @@ import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
 
-const AddSeller = () => {
+const AddEpense = () => {
   const initialInputs = {
-    debitor_name: "",
-    debitor_Date: "",
-    debitor_Amount: "",
-    debitor_paid_by:"",
-    total_product:"",
-    other_cost:"",
-    product_type:"",
+    name: "",
+    date: "",
+    amount: "",
+    paid_by:"",
     paid_status:"",
-    remark:""
+    remarks:""
   };
 
   const [inputs, setInputs] = useState(initialInputs);
@@ -32,7 +29,7 @@ const AddSeller = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const requiredFields = ["debitor_name", "debitor_Date", "debitor_Amount", "debitor_paid_by", "total_product", "product_type","other_cost"];
+    const requiredFields = ["name", "date", "amount", "paid_by", "paid_status", "remarks"];
 
     for (const field of requiredFields) {
       if (!inputs[field]) {
@@ -43,11 +40,11 @@ const AddSeller = () => {
 
     try {
       // Send data to backend
-      await axios.post(`${API_BASE_URL}/api/dealer/addDealer`, inputs);
+      await axios.post(`${API_BASE_URL}/api/expense/addExpense`, inputs);
       setInputs(initialInputs);
       toast.success("User created successfully");
-    
-     navigate('/Seller')
+     // window.location.reload();
+     navigate('/Expense')
     } catch (err) {
       console.error(err);
       setError(err.response);
@@ -59,7 +56,7 @@ const AddSeller = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Add Seller
+          Add Expense
         </h2>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -68,7 +65,7 @@ const AddSeller = () => {
         <div className="grid grid-cols-2 gap-4">
             <div>
               <label
-                htmlFor="debitor_name"
+                htmlFor="name"
                 className="block text-sm font-medium text-gray-700"
               >
                 Name
@@ -76,17 +73,17 @@ const AddSeller = () => {
               <div className="mt-1">
                 <input
                   type="name"
-                  name="debitor_name"
+                  name="name"
                   required
                   onChange={handleChange}
-                  placeholder="Enter Seller Name"
+                  placeholder="Enter  Name"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
             <div>
               <label
-                htmlFor="debitor_Date"
+                htmlFor="date"
                 className="block text-sm font-medium text-gray-700"
               >
                Date
@@ -94,7 +91,7 @@ const AddSeller = () => {
               <div className="mt-1">
                 <input
                   type="Date"
-                  name="debitor_Date"
+                  name="date"
                   required
                   onChange={handleChange}
                   placeholder="Enter your E-mail"
@@ -104,7 +101,7 @@ const AddSeller = () => {
             </div>
             <div>
               <label
-                htmlFor="debitor_Amount"
+                htmlFor="amount"
                 className="block text-sm font-medium text-gray-700"
               >
                 Amount
@@ -112,7 +109,7 @@ const AddSeller = () => {
               <div className="mt-1 relative">
                 <input
                   type="number"
-                  name="debitor_Amount"
+                  name="amount"
                   required
                   onChange={handleChange}
                   placeholder="Enter Amount"
@@ -122,7 +119,7 @@ const AddSeller = () => {
             </div>
             <div>
               <label
-                htmlFor="debitor_paid_by"
+                htmlFor="paid_by"
                 className="block text-sm font-medium text-gray-700"
               >
                 Paid By
@@ -130,7 +127,7 @@ const AddSeller = () => {
               <div className="mt-1 relative">
                 <input
                   type="text"
-                  name="debitor_paid_by"
+                  name="paid_by"
                   autoComplete="current-password"
                   required
                   onChange={handleChange}
@@ -139,63 +136,7 @@ const AddSeller = () => {
                 />
               </div>
             </div>
-            <div>
-              <label
-                htmlFor="total_product"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Total Product
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  type="number"
-                  name="total_product"
-                  autoComplete="current-password"
-                  required
-                  onChange={handleChange}
-                  placeholder="Total Product"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="other_cost"
-                className="block text-sm font-medium text-gray-700"
-              >
-               Other Cost
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  type="number"
-                  name="other_cost"
-                  autoComplete="current-password"
-                  required
-                  onChange={handleChange}
-                  placeholder="Other cost"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-              
-            </div>
-            <div>
-              <label
-                htmlFor="product_type"
-                className="block text-sm font-medium text-gray-700"
-              >
-               Product Type
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  type="text"
-                  name="product_type"
-                  required
-                  onChange={handleChange}
-                  placeholder="Product Type"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
+  
             <div>
                 <label
                   htmlFor="paid_status"
@@ -220,24 +161,27 @@ const AddSeller = () => {
                   </select>
                 </div>
               </div>
+
               <div>
               <label
-                htmlFor="remark"
+                htmlFor="remarks"
                 className="block text-sm font-medium text-gray-700"
               >
-               Remark
+               Remarks
               </label>
               <div className="mt-1 relative">
                 <input
                   type="text"
-                  name="remark"
+                  name="remarks"
                   required
                   onChange={handleChange}
-                  placeholder="Remark"
+                  placeholder="Remarks"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
-              </div>
+              
+            </div>
+
             </div>
             <div className="flex justify-between items-center mt-4">
               <button
@@ -246,7 +190,7 @@ const AddSeller = () => {
               >
                 Create
               </button>
-              <Link to="/Seller">
+              <Link to="/Expense">
                 <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                   Back
                 </button>
@@ -259,4 +203,4 @@ const AddSeller = () => {
   );
 };
 
-export default AddSeller;
+export default AddEpense;

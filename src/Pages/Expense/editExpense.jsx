@@ -4,17 +4,14 @@ import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
 
-const EditSeller = () => {
+const EditExpense = () => {
   const initialInputs = {
-    debitor_name: "",
-    debitor_Date: "",
-    debitor_Amount: "",
-    debitor_paid_by: "",
-    total_product: "",
-    other_cost: "",
-    product_type:"",
+    name: "",
+    date: "",
+    amount: "",
+    paid_by:"",
     paid_status:"",
-    remark:""
+    remarks:""
   };
 
   const { id } = useParams();
@@ -33,19 +30,16 @@ const EditSeller = () => {
   useEffect(() => {
     const fetchSeller = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/dealer/showOneDealer/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/api/expense/showOneExpense/${id}`);
         const sellerData = response.data[0];
 
         setInputs({
-          debitor_name: sellerData.debitor_name,
-          debitor_Date: sellerData.debitor_Date,
-          debitor_Amount: sellerData.debitor_Amount,
-          debitor_paid_by: sellerData.debitor_paid_by,
-          total_product: sellerData.total_product,
-          other_cost: sellerData.other_cost,
-          product_type:sellerData.product_type,
-          paid_status:sellerData.paid_status,
-          remark:sellerData.remark
+          name: sellerData.name,
+          date: sellerData.date,
+          amount: sellerData.amount,
+          paid_by: sellerData.paid_by,
+          remarks: sellerData.remarks,
+          paid_status:sellerData.paid_status
         });
       } catch (err) {
         console.error(err);
@@ -61,11 +55,11 @@ const EditSeller = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_BASE_URL}/api/dealer/editDealer/${id}`, inputs);
+      await axios.put(`${API_BASE_URL}/api/expense/editExpense/${id}`, inputs);
       setInputs(initialInputs);
       toast.success("Updated successfully");
       //window.location.reload();
-      navigate('/Seller')
+      navigate('/Expense')
     } catch (err) {
       console.error(err);
       toast.error("Failed to update seller");
@@ -83,15 +77,12 @@ const EditSeller = () => {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              {renderInput("debitor_name", "Name", "Enter Seller Name")}
-              {renderInput("debitor_Date", "Date", "Enter Date", "date")}
-              {renderInput("debitor_Amount", "Amount", "Enter Amount")}
-              {renderInput("debitor_paid_by", "Paid By", "Enter Paid By")}
-              {renderInput("total_product", "Total Product", "Enter Total Product")}
-              {renderInput("other_cost", "Other Cost", "Enter Other Cost")}
-              {renderInput("product_type", "Product Type", "Enter Product Type")}
-              {renderInput("paid_status", "Paid Status", "Enter Paid Status")}
-              {renderInput("remark", "Remark", "Enter Remark")}
+              {renderInput("name", "Name", "Enter Seller Name")}
+              {renderInput("date", "Date", "Enter Date", "date")}
+              {renderInput("amount", "Amount", "Enter Amount")}
+              {renderInput("paid_by", "Paid By", "Enter Paid By")}
+              {renderInput("remarks", "Remark", "Enter Remark")}
+              {renderInput("paid_status", "Other Cost", "Enter Other Cost")}
             </div>
             <div className="flex justify-between items-center mt-4">
               <button
@@ -134,4 +125,4 @@ const EditSeller = () => {
   }
 };
 
-export default EditSeller;
+export default EditExpense;
