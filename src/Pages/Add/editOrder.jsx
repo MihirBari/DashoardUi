@@ -8,13 +8,14 @@ const EditOrder = () => {
   const initialInputs = {
     creditor_name: "",
     amount_sold: "",
+    product_id:"",
     size: "",
     amount_condition: "yes",
     returned: "No",
-    paid_by:"",
+    paid_by: "",
   };
 
-  const { product_id } = useParams();
+  const { order_id } = useParams();
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputs);
   const [err, setError] = useState(null);
@@ -22,27 +23,29 @@ const EditOrder = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/order/viewOneOrder/${product_id}`);
+        const response = await axios.get(`${API_BASE_URL}/api/order/viewOneOrder/${order_id}`);
         const orderData = response.data[0];
         console.log("Fetched Order Data:", orderData);
-
+  
         setInputs({
           creditor_name: orderData.creditor_name,
+          product_id: orderData.product_id,
           amount_sold: orderData.amount_sold,
-          size: orderData.size,
+          size: orderData.Total_items, // Correct property name
           amount_condition: orderData.amount_condition || "yes",
           returned: orderData.returned || "No",
-          paid_by:orderData.paid_by,
+          paid_by: orderData.paid_by,
         });
+        
       } catch (err) {
         console.error(err);
         setError(err.response);
         toast.error("Failed to fetch order details");
       }
     };
-
+  
     fetchOrder();
-  }, [product_id]);
+  }, [order_id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -65,8 +68,10 @@ const EditOrder = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_BASE_URL}/api/order/updateOrder/${product_id}`, inputs);
+      await axios.put(`${API_BASE_URL}/api/order/updateOrder/${order_id}`, inputs);
       setInputs(initialInputs);
+      console.log(initialInputs)
+      console.log("order_id:", order_id);
       navigate("/Customer");
       toast.success("Order updated successfully");
     } catch (err) {
@@ -91,6 +96,9 @@ const EditOrder = () => {
                 {renderInput("creditor_name", "Name", "Enter Customer Name")}
               </div>
               <div>
+                {renderInput("product_id", "Product Id", "")}
+              </div>
+              <div>
                 {renderInput("amount_sold", "Amount Sold", "Enter Amount Sold")}
               </div>
               <div>
@@ -112,18 +120,7 @@ const EditOrder = () => {
                 ])}
               </div>
               <div>
-                {renderSelect("Size", "Sizes", [
-                  { value: "", label: "Select an option" },
-                  { value: "s", label: "S" },
-                  { value: "m", label: "M" },
-                  { value: "l", label: "L" },
-                  { value: "xl", label: "XL" },
-                  { value: "xxl", label: "2XL" },
-                  { value: "xxxl", label: "3XL" },
-                  { value: "xxxxl", label: "4XL" },
-                  { value: "xxxxxl", label: "5XL" },
-                  { value: "xxxxxxl", label: "6XL" },
-                ])}
+                {renderInput("size", "Size","size")}
               </div>
             </div>
             <div className="flex justify-between items-center mt-4">
@@ -175,6 +172,7 @@ const EditOrder = () => {
             value={inputs[name]}
             className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
+            <option value="" label="Select an option" />
             {options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}

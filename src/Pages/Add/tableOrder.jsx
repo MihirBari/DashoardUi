@@ -168,7 +168,7 @@ const TableOrder = () => {
         {
             name: 'Edit',
             cell: (row) => (
-                <MdEdit onClick={() => handleEditClick(row.product_id)}>Edit</MdEdit>
+                <MdEdit onClick={() => handleEditClick(row.order_id)}>Edit</MdEdit>
 
             ),
             button: true,

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
 import axios from "axios";
-import Select from "react-select"; // Import the Select component
-import makeAnimated from "react-select/animated";
 
-const AddOrder = () => {
+const AddOrderID = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const productIdFromLink = queryParams.get("productId");
+
   const initialInputs = {
     creditor_name: "",
-    product_id: "",
+    product_id: productIdFromLink, // Set default value to productIdFromLink
     amount_sold: "",
     size: "",
     paid_by: "",
@@ -18,17 +20,22 @@ const AddOrder = () => {
   };
 
   const [inputs, setInputs] = useState(initialInputs);
-  const [err, setError] = useState(null);
-  const [productIds, setProductIds] = useState([]);
-  const [selectedProductId, setSelectedProductId] = useState("");
-
-  const [animatedComponents] = useState(makeAnimated());
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("Product ID from link:", productIdFromLink);
+
+    if (productIdFromLink) {
+      setInputs((prevInputs) => ({
+        ...prevInputs,
+        product_id: productIdFromLink,
+      }));
+    }
+  }, [productIdFromLink]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/prod/productId`)
       .then((response) => response.json())
-      .then((data) => setProductIds(data))
       .catch((error) => console.error("Error fetching product_ids:", error));
   }, []);
 
@@ -36,7 +43,7 @@ const AddOrder = () => {
     const { name, value, type, checked } = e.target;
 
     setInputs((prev) => {
-      if (name === "Size") {
+      if (name === "size") {
         return {
           ...prev,
           size: value,
@@ -48,24 +55,6 @@ const AddOrder = () => {
         };
       }
     });
-  };
-
-  const handleProductChange = (selectedProduct) => {
-    if (selectedProduct) {
-      setInputs((prev) => ({
-        ...prev,
-        product_id: selectedProduct,
-      }));
-      setSelectedProductId(selectedProduct);
-      console.log("Selected Product ID:", selectedProduct);
-    } else {
-      setInputs((prev) => ({
-        ...prev,
-        product_id: "",
-      }));
-      setSelectedProductId("");
-      console.error("Invalid selected product:", selectedProduct);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -98,7 +87,6 @@ const AddOrder = () => {
       toast.success("Order created successfully");
     } catch (err) {
       console.error(err);
-      setError(err.response);
       toast.error("Failed to create order");
     }
   };
@@ -115,15 +103,12 @@ const AddOrder = () => {
           <form className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label
-                  htmlFor="creditor_name"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Name
                 </label>
                 <div className="mt-1">
                   <input
-                    type="name"
+                    type="text"
                     name="creditor_name"
                     required
                     onChange={handleChange}
@@ -135,32 +120,17 @@ const AddOrder = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                Product ID
+                  Product ID
                 </label>
-                <div className="mt-1 relative">
-                  <Select
-                    components={animatedComponents}
-                    isClearable
-                    isSearchable
-                    options={productIds.map((productId) => ({
-                      value: productId,
-                      label: productId,
-                    }))}
-                    onChange={(selectedOption) => {
-                      handleProductChange(
-                        selectedOption ? selectedOption.value : ""
-                      );
-                    }}
-                    placeholder="Product ID"
-                  />
+                <div className="mt-1">
+                  <span className="inline-block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    {productIdFromLink}
+                  </span>
                 </div>
               </div>
 
               <div>
-                <label
-                  htmlFor="amount_sold"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Amount Sold
                 </label>
                 <div className="mt-1 relative">
@@ -176,10 +146,7 @@ const AddOrder = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="amount_condition"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Amount Credited
                 </label>
                 <div className="mt-1 relative">
@@ -189,45 +156,38 @@ const AddOrder = () => {
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
-                    <option value=" " disabled selected>Select Option</option>
-                    <option value="yes" >
-                      Yes
-                    </option>
+                    <option value="yes">Yes</option>
                     <option value="no">No</option>
                     <option value="yes Returned">Yes Returned</option>
                     <option value="no Returned">No Returned</option>
                   </select>
                 </div>
               </div>
+
               <div>
-              <label
-                htmlFor="paid_by"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Sold By
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  type="text"
-                  name="paid_by"
-                  autoComplete="current-password"
-                  required
-                  onChange={handleChange}
-                  placeholder="Paid By"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
+                <label className="block text-sm font-medium text-gray-700">
+                  Sold By
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    type="text"
+                    name="paid_by"
+                    autoComplete="current-password"
+                    required
+                    onChange={handleChange}
+                    placeholder="Paid By"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
               </div>
-            </div>
+
               <div>
-                <label
-                  htmlFor="Size"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Sizes
                 </label>
                 <div className="mt-1 relative flex items-center">
                   <select
-                    name="Size"
+                    name="size"
                     required
                     onChange={handleChange}
                     className="ml-2 appearance-none block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -248,6 +208,7 @@ const AddOrder = () => {
                 </div>
               </div>
             </div>
+
             <div className="flex justify-between items-center mt-4">
               <Link to="/Customer">
                 <button
@@ -270,4 +231,4 @@ const AddOrder = () => {
   );
 };
 
-export default AddOrder;
+export default AddOrderID;

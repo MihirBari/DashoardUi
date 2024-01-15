@@ -9,21 +9,26 @@ import axios from "axios";
 
 const ProdTable = () => {
   const [users, setUsers] = useState([]);
-
+  const [market, setMarket] = useState([]);
   const [searchText, setSearchText] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/prod/inventory`);
-        setUsers(response.data);
+        const ordersResponse = axios.get(`${API_BASE_URL}/api/prod/inventory`);
+        const marketResponse = axios.get(`${API_BASE_URL}/api/market/showMarket`);
+  
+        const [orders, marketData] = await Promise.all([ordersResponse, marketResponse]);
+  
+        setUsers(orders.data);
+        setMarket(marketData.data);
       } catch (err) {
-        console.error("Error fetching orders:", err);
+        console.error("Error fetching data:", err);
       }
     };
-
-    fetchOrders();
+  
+    fetchData();
   }, []);
 
   const handleEditClick = (row) => {
@@ -70,6 +75,23 @@ const ProdTable = () => {
     navigate(`${row.product_id}`);
   };
 
+  const generateMarketColumns = (marketData, usersData) => {
+    return marketData.map((marketItem) => ({
+      name: marketItem.place,
+      selector: (row) => {
+        const costPrice = row.Final_cost; 
+        const percent = marketItem.percent;
+        const newPrice = costPrice + (costPrice * percent) / 100;
+        return newPrice.toFixed(2); 
+      },
+      sortable: true,
+    }));
+  };
+  
+  // Assuming that users is the array containing user data
+  const marketColumns = generateMarketColumns(market, users);
+  
+
   const columns = [
     {
       name: "Sr. No",
@@ -113,17 +135,22 @@ const ProdTable = () => {
       sortable: true,
     },
     {
-      name: "Created by",
-      selector: (row) => row.Created_by,
+      name: "status",
+      selector: (row) => row.status,
       sortable: true,
-      width: '150px',
     },
-    {
-      name: "Updated by",
-      selector: (row) => row.Updated_by,
-      sortable: true,
-      width: '150px',
-    },
+    // {
+    //   name: "Created by",
+    //   selector: (row) => row.Created_by,
+    //   sortable: true,
+    //   width: '150px',
+    // },
+    // {
+    //   name: "Updated by",
+    //   selector: (row) => row.Updated_by,
+    //   sortable: true,
+    //   width: '150px',
+    // },
     {
       name: 'Created at',
       selector: (row) => {
@@ -132,32 +159,33 @@ const ProdTable = () => {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
+          // hour: '2-digit',
+          // minute: '2-digit',
+          // second: '2-digit',
           timeZone: 'IST',
         });
       },
       sortable: true,
-      width: '250px',
+      // width: '250px',
     },
-    {
-      name: 'Updated at',
-      selector: (row) => {
-        const date = new Date(row.updated_at);
-        return date.toLocaleString('en-US', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          timeZone: 'IST',
-        });
-      },
-      sortable: true,
-      width: '250px',
-    },
+    ...marketColumns,
+    // {
+    //   name: 'Updated at',
+    //   selector: (row) => {
+    //     const date = new Date(row.updated_at);
+    //     return date.toLocaleString('en-US', {
+    //       year: 'numeric',
+    //       month: '2-digit',
+    //       day: '2-digit',
+    //       hour: '2-digit',
+    //       minute: '2-digit',
+    //       second: '2-digit',
+    //       timeZone: 'IST',
+    //     });
+    //   },
+    //   sortable: true,
+    //   width: '250px',
+    // },
     {
       name: "Edit",
       cell: (row) => <MdEdit onClick={() => handleEditClick(row)} />,
@@ -217,13 +245,13 @@ const ProdTable = () => {
         data={filteredUsers}
         fixedHeader
         customStyles={customStyles} 
-        fixedHeaderScrollHeight="450px"
+        fixedHeaderScrollHeight="800px"
         striped
         theme="solarized"
         pagination
        
-        paginationPerPage={10}
-        paginationRowsPerPageOptions={[10, 20, 30]}
+        paginationPerPage={25}
+        paginationRowsPerPageOptions={[25, 50, 100]}
         paginationComponentOptions={{
           rowsPerPageText: "Rows per page:",
           rangeSeparatorText: "of",

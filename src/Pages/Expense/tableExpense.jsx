@@ -6,6 +6,7 @@ import API_BASE_URL from "../../config";
 import { MdEdit, MdDelete  } from "react-icons/md";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { FaEye } from 'react-icons/fa';
 
 const TableExpense = () => {
     const [users, setUsers] = useState([]);
@@ -44,6 +45,10 @@ const TableExpense = () => {
         });
     };
   
+    const handleViewClick = (row) => {
+      navigate(`${row.id}`);
+    };
+
     const columns = [
         {
             name: 'Sr. No',
@@ -51,6 +56,11 @@ const TableExpense = () => {
             sortable: false,
             width: '80px',
         },
+        {
+          name: 'ID',
+          selector: (row) => row.id,
+          sortable: true,
+      },
         {
             name: 'Name',
             selector: (row) => row.name,
@@ -64,9 +74,9 @@ const TableExpense = () => {
               year: 'numeric',
               month: '2-digit',
               day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
+              // hour: '2-digit',
+              // minute: '2-digit',
+              // second: '2-digit',
               timeZone: 'IST',
             });
           },
@@ -96,6 +106,18 @@ const TableExpense = () => {
             width: "140px",
         },
         {
+          name: 'Clearance Status',
+          selector: (row) => row.clearance_status,
+          sortable: true,
+          width: "140px",
+      },
+      {
+        name: 'Payment Mode',
+        selector: (row) => row.payment_mode,
+        sortable: true,
+        width: "250px",
+    },
+        {
           name: 'Created at',
           selector: (row) => {
             const date = new Date(row.created_at);
@@ -103,32 +125,32 @@ const TableExpense = () => {
               year: 'numeric',
               month: '2-digit',
               day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
+              // hour: '2-digit',
+              // minute: '2-digit',
+              // second: '2-digit',
               timeZone: 'IST',
             });
           },
           sortable: true,
           width: '250px',
         },
-        {
-          name: 'Updated at',
-          selector: (row) => {
-            const date = new Date(row.updated_at);
-            return date.toLocaleString('en-US', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              timeZone: 'IST',
-            });
-          },
-          sortable: true,
-          width: '250px',
-        },
+        // {
+        //   name: 'Updated at',
+        //   selector: (row) => {
+        //     const date = new Date(row.updated_at);
+        //     return date.toLocaleString('en-US', {
+        //       year: 'numeric',
+        //       month: '2-digit',
+        //       day: '2-digit',
+        //       hour: '2-digit',
+        //       minute: '2-digit',
+        //       second: '2-digit',
+        //       timeZone: 'IST',
+        //     });
+        //   },
+        //   sortable: true,
+        //   width: '250px',
+        // },
         {
             name: 'Edit',
             cell: (row) => (
@@ -142,6 +164,11 @@ const TableExpense = () => {
                 <MdDelete onClick={() => handleDeleteClick(row)}>Delete</MdDelete>
             ),
             button: true,
+        },
+        {
+          name: "View",
+          cell: (row) => <FaEye onClick={() => handleViewClick(row)} />,
+          button: true,
         },
     ];
 

@@ -14,13 +14,18 @@ const EditableProductDetails = ({ product, onSave }) => {
   const handleInputChange = (e) => {
     const value =
       e.target.type === "number" ? Number(e.target.value) : e.target.value;
-
+  
     setEditedProduct({ ...editedProduct, [e.target.name]: value });
+  
+    // If the changed input is the 'status' field, set it directly
+    if (e.target.name === 'status') {
+      setEditedProduct({ ...editedProduct, status: e.target.value });
+    }
   };
 
   const handleImageChange = async (e) => {
     const files = e.target.files;
-    
+
     if (!files || files.length === 0) {
       console.error("No files selected");
       return;
@@ -28,39 +33,37 @@ const EditableProductDetails = ({ product, onSave }) => {
 
     try {
       const formData = new FormData();
-        
+
       for (let i = 0; i < files.length; i++) {
         formData.append("images", files[i]);
       }
 
-
-        const response = await axios.post(
-            `${API_BASE_URL}/api/prod/upload`,
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
-
-        if (response.status === 200) {
-            // Update the product with the new image information
-            const imagePaths = response.data.imagePaths;
-
-            setEditedProduct((prev) => ({
-                ...prev,
-                product_image: imagePaths,
-            }));
-            toast.success("Image uploaded successfully");
-        } else {
-            console.error("Failed to upload image");
+      const response = await axios.post(
+        `${API_BASE_URL}/api/prod/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-    } catch (error) {
-        console.error("Error uploading image: " + error.message);
-    }
-};
+      );
 
+      if (response.status === 200) {
+        // Update the product with the new image information
+        const imagePaths = response.data.imagePaths;
+
+        setEditedProduct((prev) => ({
+          ...prev,
+          product_image: imagePaths,
+        }));
+        toast.success("Image uploaded successfully");
+      } else {
+        console.error("Failed to upload image");
+      }
+    } catch (error) {
+      console.error("Error uploading image: " + error.message);
+    }
+  };
 
   const handleSaveClick = () => {
     // Convert relevant fields to numbers
@@ -93,9 +96,10 @@ const EditableProductDetails = ({ product, onSave }) => {
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
         <form className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
-  
             <div>
-              <label className="block text-sm font-medium text-gray-700">Product Name:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Product Name:
+              </label>
               <input
                 type="text"
                 name="product_name"
@@ -104,9 +108,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Description:
+              </label>
               <input
                 type="text"
                 name="Description"
@@ -115,9 +121,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">S:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                S:
+              </label>
               <input
                 type="number"
                 name="s"
@@ -126,9 +134,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">M:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                M:
+              </label>
               <input
                 type="number"
                 name="m"
@@ -137,9 +147,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">L:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                L:
+              </label>
               <input
                 type="number"
                 name="l"
@@ -148,9 +160,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">XL:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                XL:
+              </label>
               <input
                 type="number"
                 name="xl"
@@ -159,9 +173,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">2XL:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                2XL:
+              </label>
               <input
                 type="number"
                 name="xxl"
@@ -170,9 +186,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">3XL:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                3XL:
+              </label>
               <input
                 type="number"
                 name="xxxl"
@@ -181,9 +199,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">4XL:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                4XL:
+              </label>
               <input
                 type="number"
                 name="xxxxl"
@@ -192,9 +212,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">5XL:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                5XL:
+              </label>
               <input
                 type="number"
                 name="xxxxxl"
@@ -203,9 +225,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">6XL:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                6XL:
+              </label>
               <input
                 type="number"
                 name="xxxxxxl"
@@ -214,9 +238,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Product Price:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Product Price:
+              </label>
               <input
                 type="number"
                 name="product_price"
@@ -225,9 +251,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Cost Price:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Cost Price:
+              </label>
               <input
                 type="number"
                 name="Cost_price"
@@ -236,9 +264,11 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-  
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Other Cost Price</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Other Cost Price
+              </label>
               <input
                 type="number"
                 name="other_cost"
@@ -249,7 +279,9 @@ const EditableProductDetails = ({ product, onSave }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Final cost price:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Final cost price:
+              </label>
               <input
                 type="number"
                 name="Final_cost"
@@ -260,7 +292,9 @@ const EditableProductDetails = ({ product, onSave }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Product Type:</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Product Type:
+              </label>
               <input
                 type="text"
                 name="product_type"
@@ -269,25 +303,47 @@ const EditableProductDetails = ({ product, onSave }) => {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
+
             <div>
-                <label
-                  htmlFor="product_image"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Product Images
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type="file"
-                    name="product_image"
-                    onChange={(e) => handleImageChange(e)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    multiple
-                  />
-                </div>
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Status :
+              </label>
+              <select
+                name="status"
+                required
+                onChange={handleInputChange}
+                value={editedProduct.status} // Set the value attribute here
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+                <option value="Active">Active</option>
+                <option value="Close">Close</option>
+                <option value="upcoming">upcoming</option>
+                <option value="Draft">Draft</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="product_image"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Product Images
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  type="file"
+                  name="product_image"
+                  onChange={(e) => handleImageChange(e)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  multiple
+                />
               </div>
+            </div>
           </div>
-  
+
           <div className="flex justify-between items-center mt-4">
             <button
               onClick={handleSaveClick}

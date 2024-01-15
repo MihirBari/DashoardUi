@@ -6,16 +6,15 @@ import API_BASE_URL from "../../config";
 import { MdEdit, MdDelete  } from "react-icons/md";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { FaEye } from 'react-icons/fa';
 
-const Users = () => {
+const TableMarket = () => {
     const [users, setUsers] = useState([]);
     const [searchText, setSearchText] = useState('');
     const navigate = useNavigate();
     useEffect(() => {
       const fetchOrders = async () => {
         try {
-          const response = await axios.get(`${API_BASE_URL}/api/dealer/showDealer`);
+          const response = await axios.get(`${API_BASE_URL}/api/market/showMarket`);
           setUsers(response.data);
           console.log(response.data);
         } catch (err) {
@@ -34,7 +33,7 @@ const Users = () => {
       const idToDelete = userId.id; 
       console.log('Deleting user with ID:', idToDelete);
     
-      axios.delete(`${API_BASE_URL}/api/dealer/delete`, { data: { id: idToDelete } })
+      axios.delete(`${API_BASE_URL}/api/market/deleteMarket`, { data: { id: idToDelete } })
         .then(response => {
           console.log('Delete successful:', response.data);
           toast.success("Deleted Successfully");
@@ -45,10 +44,6 @@ const Users = () => {
         });
     };
   
-    const handleViewClick = (row) => {
-      navigate(`${row.id}`);
-    };
-
     const columns = [
         {
             name: 'Sr. No',
@@ -57,84 +52,20 @@ const Users = () => {
             width: '80px',
         },
         {
-          name: 'ID',
-          selector: (row) => row.id,
-          sortable: true,
-      },
-        {
-            name: 'Name',
-            selector: (row) => row.debitor_name,
+            name: 'id',
+            selector: (row) => row.id,
             sortable: true,
         },
         {
-          name: 'Date',
-          selector: (row) => {
-            const date = new Date(row.debitor_Date);
-            return date.toLocaleString('en-US', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              // hour: '2-digit',
-              // minute: '2-digit',
-              // second: '2-digit',
-              timeZone: 'IST',
-            });
-          },
-          sortable: true,
-          width: '250px',
-        },
-        {
-            name: 'Amount',
-            selector: (row) => row.debitor_Amount,
+            name: 'Place',
+            selector: (row) => row.place,
             sortable: true,
         },
         {
-            name: 'Paid By',
-            selector: (row) => row.debitor_paid_by,
+            name: 'Percent %',
+            selector: (row) => row.percent,
             sortable: true,
         },
-        {
-          name: 'Paid Status',
-          selector: (row) => row.paid_status,
-          sortable: true,
-          width: "140px",
-      },
-        {
-            name: 'Total Product',
-            selector: (row) => row.total_product,
-            sortable: true,
-            width: "140px",
-        },
-        {
-          name: 'Product Type',
-          selector: (row) => row.product_type,
-          sortable: true,
-          width: "140px",
-      },
-        {
-            name: 'Other Cost',
-            selector: (row) => row.other_cost,
-            sortable: true,
-            width: "140px",
-        },
-        {
-          name: 'Remark',
-          selector: (row) => row.remark,
-          sortable: true,
-          width: "140px",
-      },
-      {
-        name: 'Company account paid',
-        selector: (row) => row.company_paid,
-        sortable: true,
-        width: "140px",
-    },
-    {
-      name: 'Payment Mode',
-      selector: (row) => row.payment_mode,
-      sortable: true,
-      width: "250px",
-  },
         {
           name: 'Created at',
           selector: (row) => {
@@ -143,29 +74,32 @@ const Users = () => {
               year: 'numeric',
               month: '2-digit',
               day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
               timeZone: 'IST',
             });
           },
           sortable: true,
           width: '250px',
         },
-        // {
-        //   name: 'Updated at',
-        //   selector: (row) => {
-        //     const date = new Date(row.updated_at);
-        //     return date.toLocaleString('en-US', {
-        //       year: 'numeric',
-        //       month: '2-digit',
-        //       day: '2-digit',
-        //       hour: '2-digit',
-        //       minute: '2-digit',
-        //       second: '2-digit',
-        //       timeZone: 'IST',
-        //     });
-        //   },
-        //   sortable: true,
-        //   width: '250px',
-        // },
+        {
+          name: 'Updated at',
+          selector: (row) => {
+            const date = new Date(row.update_at);
+            return date.toLocaleString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZone: 'IST',
+            });
+          },
+          sortable: true,
+          width: '250px',
+        },
         {
             name: 'Edit',
             cell: (row) => (
@@ -179,11 +113,6 @@ const Users = () => {
                 <MdDelete onClick={() => handleDeleteClick(row)}>Delete</MdDelete>
             ),
             button: true,
-        },
-        {
-          name: "View",
-          cell: (row) => <FaEye onClick={() => handleViewClick(row)} />,
-          button: true,
         },
     ];
 
@@ -199,7 +128,7 @@ const Users = () => {
     }));
 
     const filteredUsers = users.filter(user =>
-      user.debitor_name.toString().includes(searchText) 
+      user.id.toString().includes(searchText) 
     );
   
 
@@ -236,4 +165,4 @@ const Users = () => {
 };
 
 
-export default Users;
+export default TableMarket;

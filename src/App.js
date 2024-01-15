@@ -24,6 +24,15 @@ import { AuthContext } from './context/AuthContext.jsx';
 import Expense from './Pages/Expense/Expense.jsx';
 import AddEpense from './Pages/Expense/addExpense.jsx';
 import EditExpense from './Pages/Expense/editExpense.jsx';
+import History from './Pages/history/History.jsx';
+import Details from './Pages/Detail/Details.jsx';
+import Market from './Pages/market/Market.jsx';
+import AddMarket from './Pages/market/AddMarket.jsx';
+import EditMarket from './Pages/market/EditMarket.jsx';
+import AddOrderID from './Pages/Search/addOrderID.jsx';
+import ViewExpense from './Pages/Expense/ViewExpense.jsx';
+import ViewSeller from './Pages/Seller/ViewSeller.jsx';
+
 
 function App() {
   const { currentUser } = useContext(AuthContext);
@@ -39,23 +48,31 @@ function App() {
         <Route path='/addProd' element={currentUser ? <AddProd /> : <Navigate to='/' />} />
         <Route path='/Seller' element={currentUser ? <Seller /> : <Navigate to='/' />} />
         <Route path='/Expense' element={currentUser ? <Expense /> : <Navigate to='/' />} />
+        <Route path='/Market' element={currentUser ? <Market /> : <Navigate to='/' />} />
         <Route path='/addSeller' element={currentUser ? <AddSeller /> : <Navigate to='/' />} />
         <Route path='/addExpense' element={currentUser ? <AddEpense /> : <Navigate to='/' />} />
+        <Route path='/addMarket' element={currentUser ? <AddMarket /> : <Navigate to='/' />} />
         <Route path='/Customer' element={currentUser ? <Order /> : <Navigate to='/' />} />
         <Route path='/addCustomer' element={currentUser ? <AddOrder /> : <Navigate to='/' />} />
+        <Route path='/addCustomers' element={currentUser ? <AddOrderID /> : <Navigate to='/' />} />
         <Route
-          path='/Customer/edit/:product_id'
+          path='/Customer/edit/:order_id'
           element={currentUser ? <EditOrder /> : <Navigate to='/' />}
         />
         <Route path='/Seller/edit/:id' element={currentUser ? <EditSeller /> : <Navigate to='/' />} />
         <Route path='/Expense/edit/:id' element={currentUser ? <EditExpense /> : <Navigate to='/' />} />
+        <Route path='/Market/edit/:id' element={currentUser ? <EditMarket /> : <Navigate to='/' />} />
         <Route path='/Product/:product_Id' element={currentUser ? <VeiwProduct /> : <Navigate to='/' />} />
+        <Route path='/Expense/:id' element={currentUser ? <ViewExpense /> : <Navigate to='/' />} />
+        <Route path='/Seller/:id' element={currentUser ? <ViewSeller /> : <Navigate to='/' />} />
         <Route
           path='/Product/edit/:product_id'
           element={currentUser ? <EditProduct /> : <Navigate to='/' />}
         />
         <Route path='/Search' element={currentUser ? <Image /> : <Navigate to='/' />} />
         <Route path='/Search/:product_Id' element={currentUser ? <SearchProduct /> : <Navigate to='/' />} />
+        <Route path='/History' element={currentUser ? <History /> : <Navigate to='/' />} />
+        <Route path='/Details' element={currentUser ? <Details /> : <Navigate to='/' />} />
       </Routes>
 
       <ToastContainer

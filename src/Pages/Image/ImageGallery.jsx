@@ -34,7 +34,7 @@ const ImageGallery = () => {
 };
 
 const CloudinaryImage = ({ publicId }) => {
-  const cloudinaryUrl = `https://res.cloudinary.com/dgcxd0kkk/image/upload/${publicId}`;
+  const cloudinaryUrl = `https://res.cloudinary.com/dirtvhx2i/image/upload/${publicId}`;
 
   return (
     <img

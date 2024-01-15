@@ -13,6 +13,9 @@ const SideNavBar = () => {
     { title: "Orders", src: "Chart", link: "/Customer" },
     { title: "Seller", src: "Setting", link: "/Seller" },
     { title: "Expense", src: "Setting", link: "/Expense" },
+    { title: "History", src: "Folder", link: "/History" },
+    { title: "Market", src: "Folder", link: "/Market" },
+    { title: "Details", src: "Folder", link: "/Details" },
   ];
 
   const handleTabClick = (index) => {

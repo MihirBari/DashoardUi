@@ -24,6 +24,7 @@ const AddProd = () => {
     Cost_price: "",
     other_cost: "",
     Final_cost: "",
+    status:"",
     product_image: null,
   };
   const [inputs, setInputs] = useState(initialInputs);
@@ -97,7 +98,7 @@ const AddProd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["product_id", "product_name", "product_price", "Cost_price", "product_type", "product_image", "Description", "other_cost", "Final_cost"];
+    const requiredFields = ["product_id", "product_name", "product_price", "Cost_price", "product_type", "product_image", "Description", "other_cost", "Final_cost","status"];
 
     for (const field of requiredFields) {
       if (!inputs[field]) {
@@ -123,6 +124,7 @@ const AddProd = () => {
         product_price: inputs.product_price,
         Cost_price: inputs.Cost_price,
         product_type: inputs.product_type,
+        status:inputs.status,
         other_cost: inputs.other_cost,
         Final_cost: inputs.Final_cost,
         product_image: inputs.product_image,
@@ -447,6 +449,31 @@ const AddProd = () => {
                   />
                 </div>
               </div>
+
+              <div>
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Status
+                </label>
+                <div className="mt-1 relative">
+                  <select
+                    name="status"
+                    required
+                    onChange={handleChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value="Active" selected>
+                    Active
+                    </option>
+                    <option value="Close">Close</option>
+                    <option value="upcoming">upcoming</option>
+                    <option value="Draft">Draft</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label
                   htmlFor="product_image"

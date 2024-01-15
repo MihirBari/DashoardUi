@@ -15,7 +15,10 @@ const AddSeller = () => {
     other_cost:"",
     product_type:"",
     paid_status:"",
-    remark:""
+    remark:"",
+    company_paid:'',
+    payment_mode:'',
+    reciept:""
   };
 
   const [inputs, setInputs] = useState(initialInputs);
@@ -28,6 +31,50 @@ const AddSeller = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const handleImageChange = async (e) => {
+    const files = e.target.files;
+
+    if (!files || files.length === 0) {
+      console.error("No files selected");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+
+      for (let i = 0; i < files.length; i++) {
+        formData.append("images", files[i]);
+      }
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/dealer/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const imagePaths = response.data.imagePaths;
+
+        setInputs((prev) => ({
+          ...prev,
+          reciept: imagePaths,
+        }));
+
+        toast.success("Images uploaded successfully");
+      } else {
+        console.error("Failed to upload images");
+        toast.error("Failed to upload images");
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error.message);
+      toast.error("Error uploading images");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -196,6 +243,7 @@ const AddSeller = () => {
                 />
               </div>
             </div>
+
             <div>
                 <label
                   htmlFor="paid_status"
@@ -210,16 +258,18 @@ const AddSeller = () => {
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
-                    <option value="yes" selected>
+                    <option value=" " disabled selected>Select Option</option>
+                    <option value="yes" >
                       Yes
                     </option>
                     <option value="no">No</option>
-                    <option value="pending" selected>
+                    <option value="pending" >
                       Pending
                     </option>
                   </select>
                 </div>
               </div>
+
               <div>
               <label
                 htmlFor="remark"
@@ -238,6 +288,82 @@ const AddSeller = () => {
                 />
               </div>
               </div>
+
+            
+              <div>
+                <label
+                  htmlFor="company_paid"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Company account paid
+                </label>
+                <div className="mt-1 relative">
+                  <select
+                    name="company_paid"
+                    required
+                    onChange={handleChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value=" " disabled selected>Select Option</option>
+                    <option value="yes" >
+                      Yes
+                    </option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+              </div>
+
+              
+            <div>
+                <label
+                  htmlFor="payment_mode"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Payment Mode
+                </label>
+                <div className="mt-1 relative">
+                  <select
+                    name="payment_mode"
+                    required
+                    onChange={handleChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  > 
+                   <option value=" " disabled selected>Select Option</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cash"  >
+                    Cash
+                    </option>
+                    <option value="net banking" >
+                    net banking
+                    </option>
+                    <option value="Mobile banking">Mobile banking</option>
+                    <option value="By company employee">By company employee</option>
+                    <option value="credit card">credit card</option>
+                    <option value="debit card">Debit card</option>
+                    <option value="bank transfer">bank transfer</option>
+                    <option value="others">others</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="reciept"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Receipt
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    type="file"
+                    name="reciept"
+                    onChange={(e) => handleImageChange(e)}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+  
+
             </div>
             <div className="flex justify-between items-center mt-4">
               <button

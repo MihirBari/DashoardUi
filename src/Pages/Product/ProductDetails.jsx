@@ -122,11 +122,19 @@ const ProductDetails = ({ product }) => {
       </div>
     </div>
 
-    <Link to="/product">
-      <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 ">
-        Back
-      </button>
-    </Link>
+    <div className="flex gap-6">
+        <Link to="/Product">
+          <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            Back
+          </button>
+        </Link>
+        <Link to={`/addCustomers?productId=${product_id}`}>
+          <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            Order
+          </button>
+        </Link>
+
+      </div>
   </div>
   );
 };
