@@ -74,36 +74,36 @@ const Users = () => {
             name: 'Created at',
             selector: (row) => {
               const date = new Date(row.created_at);
-              return date.toLocaleString('en-US', {
+              return date.toLocaleString('en-Uk', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
+                // hour: '2-digit',
+                // minute: '2-digit',
+                // second: '2-digit',
                 timeZone: 'IST',
               });
             },
             sortable: true,
             width: '250px',
           },
-          {
-            name: 'Updated at',
-            selector: (row) => {
-              const date = new Date(row.updated_at);
-              return date.toLocaleString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                timeZone: 'IST',
-              });
-            },
-            sortable: true,
-            width: '250px',
-          },
+        //   {
+        //     name: 'Updated at',
+        //     selector: (row) => {
+        //       const date = new Date(row.updated_at);
+        //       return date.toLocaleString('en-US', {
+        //         year: 'numeric',
+        //         month: '2-digit',
+        //         day: '2-digit',
+        //         hour: '2-digit',
+        //         minute: '2-digit',
+        //         second: '2-digit',
+        //         timeZone: 'IST',
+        //       });
+        //     },
+        //     sortable: true,
+        //     width: '250px',
+        //   },
         {
             name: 'Edit',
             cell: (row) => (

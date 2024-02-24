@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config";
@@ -24,12 +24,13 @@ const AddProd = () => {
     Cost_price: "",
     other_cost: "",
     Final_cost: "",
-    status:"",
+    status: "",
     product_image: null,
   };
   const [inputs, setInputs] = useState(initialInputs);
   const [err, setError] = useState(null);
   const navigate = useNavigate();
+  const [productTypes, setProductTypes] = useState();
   const { currentUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
@@ -49,6 +50,19 @@ const AddProd = () => {
 
       return newInputs;
     });
+  };
+
+  useEffect(() => {
+    fetchProductTypes();
+  }, []);
+
+  const fetchProductTypes = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/prod/productType`);
+      setProductTypes(response.data);
+    } catch (error) {
+      console.error("Error fetching product types:", error.message);
+    }
   };
 
   const handleImageChange = async (e) => {
@@ -98,11 +112,22 @@ const AddProd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["product_id", "product_name", "product_price", "Cost_price", "product_type", "product_image", "Description", "other_cost", "Final_cost","status"];
+    const requiredFields = [
+      "product_id",
+      "product_name",
+      "product_price",
+      "Cost_price",
+      "product_type",
+      "product_image",
+      "Description",
+      "other_cost",
+      "Final_cost",
+      "status",
+    ];
 
     for (const field of requiredFields) {
       if (!inputs[field]) {
-        toast.error(`Please fill in the ${field.replace(/_/g, ' ')} field.`);
+        toast.error(`Please fill in the ${field.replace(/_/g, " ")} field.`);
         return;
       }
     }
@@ -124,7 +149,7 @@ const AddProd = () => {
         product_price: inputs.product_price,
         Cost_price: inputs.Cost_price,
         product_type: inputs.product_type,
-        status:inputs.status,
+        status: inputs.status,
         other_cost: inputs.other_cost,
         Final_cost: inputs.Final_cost,
         product_image: inputs.product_image,
@@ -198,6 +223,7 @@ const AddProd = () => {
                   />
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="product_type"
@@ -206,16 +232,33 @@ const AddProd = () => {
                   Product Type
                 </label>
                 <div className="mt-1 relative">
+                  <select
+                    name="product_type"
+                    required
+                    onChange={handleChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value="" selected disabled>
+                      Select or Enter Product Type
+                    </option>
+                    {productTypes &&
+                      productTypes.map((type, index) => (
+                        <option key={index} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                  </select>
                   <input
                     type="text"
                     name="product_type"
                     required
                     onChange={handleChange}
-                    placeholder="Enter  Product Type"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Enter New Product Type"
+                    className="mt-2 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="s"
@@ -401,7 +444,7 @@ const AddProd = () => {
                   htmlFor="Cost_price"
                   className="block text-sm font-medium text-gray-700"
                 >
-                Product Cost Price
+                  Product Cost Price
                 </label>
                 <div className="mt-1 relative">
                   <input
@@ -419,7 +462,7 @@ const AddProd = () => {
                   htmlFor="other_cost"
                   className="block text-sm font-medium text-gray-700"
                 >
-                Other Cost Price
+                  Other Cost Price
                 </label>
                 <div className="mt-1 relative">
                   <input
@@ -464,9 +507,10 @@ const AddProd = () => {
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
-                    <option value="Active" selected>
-                    Active
+                    <option value="" selected disabled>
+                      Select Option
                     </option>
+                    <option value="Active">Active</option>
                     <option value="Close">Close</option>
                     <option value="upcoming">upcoming</option>
                     <option value="Draft">Draft</option>
@@ -512,13 +556,13 @@ const AddProd = () => {
             </div>
             {/* Add more fields in a similar manner */}
             <div className="flex justify-between items-center mt-4">
-              <Link to="/product" >
-              <button
-                onClick={handleSubmit}
-                className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-              >
-                Create
-              </button>
+              <Link to="/product">
+                <button
+                  onClick={handleSubmit}
+                  className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Create
+                </button>
               </Link>
               <Link to="/product">
                 <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">

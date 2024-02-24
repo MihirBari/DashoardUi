@@ -13,6 +13,8 @@ const EditOrder = () => {
     amount_condition: "yes",
     returned: "No",
     paid_by: "",
+    bank_payment:"",
+    city:""
   };
 
   const { order_id } = useParams();
@@ -35,6 +37,8 @@ const EditOrder = () => {
           amount_condition: orderData.amount_condition || "yes",
           returned: orderData.returned || "No",
           paid_by: orderData.paid_by,
+          bank_payment: orderData.bank_payment,
+          city:orderData.city
         });
         
       } catch (err) {
@@ -106,7 +110,13 @@ const EditOrder = () => {
               </div>
               <div>
                 {renderSelect("amount_condition", "Amount Credited", [
-                  { value: "", label: "Select an option" },
+                  { value: "No", label: "No" },
+                  { value: "Yes", label: "Yes" },
+                ])}
+              </div>
+              <div>
+                {renderSelect("returned", "Returned", [
+
                   { value: "yes", label: "Yes" },
                   { value: "no", label: "No" },
                   { value: "yes Returned", label: "Yes Returned" },
@@ -114,13 +124,13 @@ const EditOrder = () => {
                 ])}
               </div>
               <div>
-                {renderSelect("returned", "Returned", [
-                  { value: "No", label: "No" },
-                  { value: "Yes", label: "Yes" },
-                ])}
+                {renderInput("bank_payment", "Bank Payment", "Bank Payment")}
               </div>
               <div>
-                {renderInput("size", "Size","size")}
+                {renderInput("city", "City", "City")}
+              </div>
+              <div>
+                {renderInputs("size", "Size","size",)}
               </div>
             </div>
             <div className="flex justify-between items-center mt-4">
@@ -158,6 +168,28 @@ const EditOrder = () => {
     );
   }
 
+  function renderInputs(name, label, placeholder) {
+    return (
+      <>
+        <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+        <div className="mt-1">
+          <input
+            type="name"
+            name={name}
+            required
+            onChange={handleChange}
+            placeholder={placeholder}
+            readOnly
+            value={inputs[name]}
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+        </div>
+      </>
+    );
+  }
+
   function renderSelect(name, label, options) {
     return (
       <>
@@ -172,7 +204,7 @@ const EditOrder = () => {
             value={inputs[name]}
             className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
-            <option value="" label="Select an option" />
+            <option value="" label="Select an option" disabled/>
             {options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}

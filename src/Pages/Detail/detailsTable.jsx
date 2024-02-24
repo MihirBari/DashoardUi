@@ -130,7 +130,7 @@ const DetailsTable = () => {
       name: 'Created at',
       selector: (row) => {
         const date = new Date(row.created_at);
-        return date.toLocaleString('en-US', {
+        return date.toLocaleString('en-Uk', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -179,13 +179,38 @@ const DetailsTable = () => {
   );
 
   const customStyles = {
-   
     headCells: {
-        style: {
-          color: "rgb(255 255 255)"
+      style: {
+        color: "rgb(255 255 255)",
+        zIndex: "auto",
+        "&:not(:last-of-type)": {
+          borderRightStyle: "solid",
+          borderRightWidth: "1px",
         },
-    }
-};
+      },
+    },
+    header: {
+      style: {
+        minHeight: "56px",
+        fontSize: "25px",
+      },
+    },
+    headRow: {
+      style: {
+        borderTopStyle: "solid",
+        borderTopWidth: "1px",
+      },
+    },
+    cells: {
+      style: {
+        "&:not(:last-of-type)": {
+          borderRightStyle: "solid",
+          borderRightWidth: "1px",
+        },
+        fontSize: "16px",
+      },
+    },
+  };
 
   
   return (

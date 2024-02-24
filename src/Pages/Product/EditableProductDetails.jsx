@@ -6,7 +6,8 @@ import axios from "axios";
 
 const EditableProductDetails = ({ product, onSave }) => {
   const [editedProduct, setEditedProduct] = useState(product);
-
+  const [productTypes, setProductTypes] = useState();
+  
   useEffect(() => {
     setEditedProduct(product);
   }, [product]);
@@ -17,9 +18,19 @@ const EditableProductDetails = ({ product, onSave }) => {
   
     setEditedProduct({ ...editedProduct, [e.target.name]: value });
   
+    
     // If the changed input is the 'status' field, set it directly
     if (e.target.name === 'status') {
       setEditedProduct({ ...editedProduct, status: e.target.value });
+    }
+  };
+
+  const fetchProductTypes = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/prod/productType`);
+      setProductTypes(response.data);
+    } catch (error) {
+      console.error("Error fetching product types:", error.message);
     }
   };
 
@@ -318,6 +329,7 @@ const EditableProductDetails = ({ product, onSave }) => {
                 value={editedProduct.status} // Set the value attribute here
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
+              <option value="" selected disabled>Select Option</option>
                 <option value="Active">Active</option>
                 <option value="Close">Close</option>
                 <option value="upcoming">upcoming</option>

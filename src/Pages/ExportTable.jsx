@@ -50,11 +50,17 @@ const ExportTable = ({ data, isOpen, onRequestClose }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose}
+    style={{
+      overlay: {
+        zIndex: 9999,
+      },
+    }}
+    >
       <h2>Export Options</h2>
       <label>
         File Name:
-        <input type="text" value={fileName} onChange={(e) => setFileName(e.target.value)} />
+        <input type="text" style={{ border: "1px solid #000", padding: "5px", borderRadius: "5px" }} value={fileName} onChange={(e) => setFileName(e.target.value)} />
       </label>
       <button  className="bg-blue-500 text-white px-4 py-2 rounded" style={{marginLeft:"10px"}}  onClick={() => handleDownload("csv")}>Download CSV</button>
       <button  className="bg-blue-500 text-white px-4 py-2 rounded" style={{margin:"20px"}} onClick={() => handleDownload("pdf")}>Download PDF</button>

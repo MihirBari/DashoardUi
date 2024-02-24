@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import "./orders.css"
-import DataTable from 'react-data-table-component';
+import DataTable, { createTheme } from 'react-data-table-component';
 import API_BASE_URL from "../../config";
 import { MdEdit, MdDelete  } from "react-icons/md";
 import { toast } from 'react-toastify';
@@ -132,6 +132,66 @@ const TableMarket = () => {
     );
   
 
+    createTheme(
+      "solarized",
+      {
+        text: {
+          primary: "#FFFFFF",
+          secondary: "#FFFFFF",
+        },
+        background: {
+          default: "rgba(59,139,246,1)",
+        },
+        context: {
+          background: "#cb4b16",
+          text: "#FFFFFF",
+        },
+        divider: {
+          default: "#073642",
+        },
+        action: {
+          button: "rgba(0,0,0,.54)",
+          hover: "rgba(59,139,246,1)",
+          disabled: "rgba(0,0,0,.12)",
+        },
+      },
+      "light"
+    );
+  
+    const customStyles = {
+      headCells: {
+        style: {
+          color: "rgb(255 255 255)",
+          zIndex: "auto",
+          "&:not(:last-of-type)": {
+            borderRightStyle: "solid",
+            borderRightWidth: "1px",
+          },
+        },
+      },
+      header: {
+        style: {
+          minHeight: "56px",
+          fontSize: "25px",
+        },
+      },
+      headRow: {
+        style: {
+          borderTopStyle: "solid",
+          borderTopWidth: "1px",
+        },
+      },
+      cells: {
+        style: {
+          "&:not(:last-of-type)": {
+            borderRightStyle: "solid",
+            borderRightWidth: "1px",
+          },
+          fontSize: "16px",
+        },
+      },
+    };
+
     return (
       <div className="order">
         <input
@@ -145,9 +205,11 @@ const TableMarket = () => {
           className="dataTable"
           columns={modifiedColumns}
           data={filteredUsers}
-          fixedHeader
-          fixedHeaderScrollHeight="450px"
-          striped
+            //fixedHeader
+  customStyles={customStyles} // Pass the updated customStyles object here
+  fixedHeaderScrollHeight="800px"
+  striped
+  theme="solarized"
           pagination
           highlightOnHover
           paginationPerPage={10}

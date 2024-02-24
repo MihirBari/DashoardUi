@@ -1,26 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import SideNavBar from '../Sidebar/Navbar';
 import ProductDetails from './ProductDetails';
 import axios from 'axios';
-import API_BASE_URL from "../../config";
+import API_BASE_URL from '../../config';
 
 const ViewProduct = () => {
-  const { product_Id } = useParams(); 
+  const { product_Id } = useParams();
   const [product, setProduct] = useState(null);
+  const [marketData, setMarketData] = useState(null);
 
   useEffect(() => {
-    const fetchData = () => {
-      axios.get(`${API_BASE_URL}/api/prod/Product/${product_Id}`)
-        .then(response => {
-          console.log('API Response:', response);
-          setProduct(response.data);
-        })
-        .catch(error => {
-          console.error('Error fetching product data:', error);
-        });
+    const fetchData = async () => {
+      try {
+        const [productResponse, marketResponse] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/prod/Product/${product_Id}`),
+          axios.get(`${API_BASE_URL}/api/market/showMarket`),
+        ]);
+
+        setProduct(productResponse.data);
+        setMarketData(marketResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
-  
+
     fetchData();
   }, [product_Id]);
 
@@ -33,7 +37,9 @@ const ViewProduct = () => {
             <h1 className="text-2xl font-semibold text-center">Products</h1>
           </div>
 
-          {product && <ProductDetails product={product} />}
+          {product && marketData && (
+            <ProductDetails product={product} marketData={marketData} />
+          )}
         </div>
       </div>
     </>

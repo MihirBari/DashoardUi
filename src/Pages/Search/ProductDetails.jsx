@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 
 
-const ProductDetails = ({ product }) => {
+const ProductDetails = ({ product,marketData }) => {
   const {
     product_name,
     product_id,
@@ -38,10 +38,10 @@ const ProductDetails = ({ product }) => {
         return imagePath; // Assuming imagePath already contains the "data:image" prefix
       });
 
-      console.log("Image Src List:", images);
+   //   console.log("Image Src List:", images);
       setImageSrcList(images);
     } else {
-      console.error("Product images are not in the expected format:", product_image);
+    //  console.error("Product images are not in the expected format:", product_image);
     }
   }, [product_image]);
 
@@ -72,7 +72,7 @@ const ProductDetails = ({ product }) => {
             {imageSrcList.map((src, index) => (
               <div key={index}>
                 <img
-                  style={{ width: "100%", height: "100%" }}
+                  style={{ width: "50%", height: "50%" }}
                   src={src}
                   alt={`Product ${index + 1}`}
                 />
@@ -91,6 +91,21 @@ const ProductDetails = ({ product }) => {
           <p className="text-gray-800 font-semibold mb-2">Total price : ₹ {Final_cost}</p>
           <p className="text-gray-800 font-semibold mb-2">Type : {product_type}</p>
           <p className="text-gray-800 font-semibold mb-2">Stocks : {Stock}</p>
+          
+          {marketData &&
+            Array.isArray(marketData) &&
+            marketData.map((marketItem) => (
+              <div key={marketItem.place}>
+                {/* <p className="text-gray-800 font-semibold mb-2">{marketItem.place}: {marketItem.place}</p> */}
+                {typeof marketItem.percent === 'number' && (
+                  <p className="text-gray-800 font-semibold mb-2">
+                    {marketItem.place}: ₹ {(Final_cost + (Final_cost * marketItem.percent) / 100).toFixed(2)}
+                  </p>
+                )}
+
+              </div>
+            ))}
+
 
           <div className="flex items-center">
             <p className="text-gray-600 mr-2">Sizes:</p>
@@ -117,9 +132,16 @@ const ProductDetails = ({ product }) => {
             Back
           </button>
         </Link>
+        
         <Link to={`/addCustomers?productId=${product_id}`}>
           <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
             Order
+          </button>
+        </Link>
+
+        <Link to={`/Product/edit/${product_id}`}>
+          <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            Edit 
           </button>
         </Link>
 

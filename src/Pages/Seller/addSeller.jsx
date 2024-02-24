@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
@@ -23,6 +23,7 @@ const AddSeller = () => {
 
   const [inputs, setInputs] = useState(initialInputs);
   const [err, setError] = useState(null);
+  const [productTypes, setProductTypes] = useState();
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -99,6 +100,19 @@ const AddSeller = () => {
       console.error(err);
       setError(err.response);
       toast.error("Failed to create user");
+    }
+  };
+
+  useEffect(() => {
+    fetchProductTypes();
+  }, []);
+
+  const fetchProductTypes = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/prod/productType`);
+      setProductTypes(response.data);
+    } catch (error) {
+      console.error("Error fetching product types:", error.message);
     }
   };
 
@@ -233,14 +247,22 @@ const AddSeller = () => {
                Product Type
               </label>
               <div className="mt-1 relative">
-                <input
-                  type="text"
-                  name="product_type"
-                  required
-                  onChange={handleChange}
-                  placeholder="Product Type"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
+                  <select
+                    name="product_type"
+                    required
+                    onChange={handleChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value="" selected disabled>
+                      Select or Enter Product Type
+                    </option>
+                    {productTypes &&
+                      productTypes.map((type, index) => (
+                        <option key={index} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                  </select>
               </div>
             </div>
 

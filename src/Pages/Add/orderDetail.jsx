@@ -5,6 +5,8 @@ const OrderDetail = ({ product }) => {
     product_name,
     amount_condition,
     amount_sold,
+    bank_payment,
+    city,
     s,
     m,
     l,
@@ -38,6 +40,8 @@ const OrderDetail = ({ product }) => {
         <p className="text-gray-800 font-semibold mb-2">payment Status: {amount_condition}</p>
         <p className="text-gray-600 mb-2">Returned : {returned}</p>
         <p className="text-gray-600 mb-2">Toatl Amount Sold:₹ {amount_sold}</p>
+        <p className="text-gray-600 mb-2">Bank Amount:₹ {bank_payment}</p>
+        <p className="text-gray-600 mb-2">City : {city}</p>
 
         <div className="flex items-center">
           <p className="text-gray-600 mr-2">Sizes:</p>

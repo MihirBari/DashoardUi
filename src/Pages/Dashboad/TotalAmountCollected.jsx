@@ -38,7 +38,7 @@ const TotalAmountCollected = () => {
         <DateFilter onFilterChange={handleFilterChange} />
         <Link to ='/Customer'>
         <div className="mb-2">
-        ₹ {totalSales}
+        ₹ {totalSales !== null ? totalSales : 0}
         </div>
         </Link>
       </div>

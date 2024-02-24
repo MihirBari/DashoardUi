@@ -34,11 +34,11 @@ const TotalAmountInvested = () => {
   return (
     <div >
       <div className="bg-gray-200 p-4 rounded-md shadow-md">
-        <h2 className="text-xl font-bold mb-4">Total Amount Invested</h2>
+        <h2 className="text-xl font-bold mb-4">Total Cost Price</h2>
         <DateFilter onFilterChange={handleFilterChange} />
         <Link to='/Seller'>
         <div className="mb-2">
-        ₹ {totalSales}
+        ₹ {totalSales !== null ? totalSales : 0}
         </div>
         </Link>
       </div>

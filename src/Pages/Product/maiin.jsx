@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import TableProduct from "./tableProduct";
+import ProductTable from "./ProductTable";
 
 const Main = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Main = () => {
         </button>
       </div>
       <div className="flex-1 overflow-y-auto">
+        
         <TableProduct />
       </div>
     </div>

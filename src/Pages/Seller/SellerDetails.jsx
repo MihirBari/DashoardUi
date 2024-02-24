@@ -55,21 +55,37 @@ const SellerDetails = ({ product }) => {
     slidesToScroll: 1,
   };
 
+  const downloadImage = async (url, index) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+  
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `Product_${index + 1}`;
+      link.click();
+    } catch (error) {
+      console.error("Error downloading image:", error);
+    }
+  };
+
+
   return (
     <div className="flex flex-col justify-center items-center mt-2">
     <div className="flex flex-col md:flex-row justify-center items-center mt-8">
       <div className="max-w-md w-full md:w-1/2  p-4 rounded-lg ">
-        <Slider {...settings}>
-          {imageSrcList.map((src, index) => (
-            <div key={index}>
-              <img
-                style={{ width: "100%", height: "100%" }}
-                src={src}
-                alt={`Product ${index + 1}`}
-              />
-            </div>
-          ))}
-        </Slider>
+      <Slider {...settings}>
+            {imageSrcList.map((src, index) => (
+              <div key={index}>
+                <img
+                  style={{ width: "100%", height: "100%", cursor: "pointer" }}
+                  src={src}
+                  alt={`Product ${index + 1}`}
+                  onClick={() => downloadImage(src, index)}
+                />
+              </div>
+            ))}
+          </Slider>
       </div>
 
       <div className="max-w-md w-full md:w-1/2  p-4 rounded-lg">

@@ -26,7 +26,7 @@ export const EditProduct = () => {
     other_cost:"",
     Final_cost:"",
     product_type: "",
-    status:"Active"
+    status:""
   });
 
   const { product_id } = useParams();
@@ -55,7 +55,7 @@ export const EditProduct = () => {
             other_cost: productData.other_cost || "",
             Final_cost: productData.Final_cost || "",
             product_type: productData.product_type || "",
-            status:productData.status || "Active" 
+            status:productData.status || "" 
           });
         } else {
           console.error('Product ID is undefined');

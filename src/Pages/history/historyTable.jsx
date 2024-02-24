@@ -21,8 +21,6 @@ const HistorTable = () => {
     fetchOrders();
   }, []);
 
-  
-
   createTheme('solarized', {
     text: {
       primary: '#FFFFFF',
@@ -74,16 +72,29 @@ const HistorTable = () => {
       width: "150px",
     },
     {
+      name: 'Size',
+      selector: (row) => {
+        const sizeValues = ['s', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl', 'xxxxxl', 'xxxxxxl'];
+        
+        const sizes = sizeValues
+          .filter(size => row[size] !== 0 && row[size] !== undefined)
+          .join(', ');
+  
+        return sizes;
+      },
+      sortable: true,
+    },
+    {
       name: 'Created at',
       selector: (row) => {
         const date = new Date(row.created_at);
-        return date.toLocaleString('en-US', {
+        return date.toLocaleString('en-Uk', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
+          // hour: '2-digit',
+          // minute: '2-digit',
+          // second: '2-digit',
           timeZone: 'IST',
         });
       },
@@ -108,13 +119,38 @@ const HistorTable = () => {
   );
 
   const customStyles = {
-   
     headCells: {
-        style: {
-          color: "rgb(255 255 255)"
+      style: {
+        color: "rgb(255 255 255)",
+        zIndex: "auto",
+        "&:not(:last-of-type)": {
+          borderRightStyle: "solid",
+          borderRightWidth: "1px",
         },
-    }
-};
+      },
+    },
+    header: {
+      style: {
+        minHeight: "56px",
+        fontSize: "25px",
+      },
+    },
+    headRow: {
+      style: {
+        borderTopStyle: "solid",
+        borderTopWidth: "1px",
+      },
+    },
+    cells: {
+      style: {
+        "&:not(:last-of-type)": {
+          borderRightStyle: "solid",
+          borderRightWidth: "1px",
+        },
+        fontSize: "16px",
+      },
+    },
+  };
 
   
   return (

@@ -15,8 +15,8 @@ const AddOrderID = () => {
     amount_sold: "",
     size: "",
     paid_by: "",
-    amount_condition: "yes",
-    returned: "No",
+    amount_condition: "",
+    returned: "no",
   };
 
   const [inputs, setInputs] = useState(initialInputs);
@@ -156,10 +156,11 @@ const AddOrderID = () => {
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
+                    <option value="" disabled selected>
+                      Select an option
+                    </option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
-                    <option value="yes Returned">Yes Returned</option>
-                    <option value="no Returned">No Returned</option>
                   </select>
                 </div>
               </div>
@@ -180,7 +181,6 @@ const AddOrderID = () => {
                   />
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Sizes
@@ -218,8 +218,8 @@ const AddOrderID = () => {
                   Create
                 </button>
               </Link>
-              <Link to="/Customer">
-                <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+              <Link to={`/search/${productIdFromLink}`}>
+              <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                   Back
                 </button>
               </Link>

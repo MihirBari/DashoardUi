@@ -6,10 +6,10 @@ const SideNavBar = () => {
   const [open, setOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const Menus = [
-    // { title: "Dashboard", src: "Chart_fill", link: "/dashboard" },
-    { title: "User", src: "User", link: "/user" },
     { title: "Inventory", src: "Folder", link: "/Product" },
+    { title: "User", src: "User", link: "/user" },
     { title: "Search", src: "Search", link: "/search" },
+    //{ title: "Dashboard", src: "Chart_fill", link: "/dashboard" },
     { title: "Orders", src: "Chart", link: "/Customer" },
     { title: "Seller", src: "Setting", link: "/Seller" },
     { title: "Expense", src: "Setting", link: "/Expense" },

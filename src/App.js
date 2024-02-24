@@ -32,6 +32,8 @@ import EditMarket from './Pages/market/EditMarket.jsx';
 import AddOrderID from './Pages/Search/addOrderID.jsx';
 import ViewExpense from './Pages/Expense/ViewExpense.jsx';
 import ViewSeller from './Pages/Seller/ViewSeller.jsx';
+import AddHistory from './Pages/history/addHistory.jsx';
+import Dashboard from './Pages/Dashboad/Dashboad.jsx';
 
 
 function App() {
@@ -42,6 +44,7 @@ function App() {
       <Routes>
         <Route path='/' element={currentUser ? <Navigate to='/product' /> : <Login />} />
         <Route path='/user' element={currentUser ? <User /> : <Navigate to='/' />} />
+        <Route path='/dashboard' element={currentUser ? <Dashboard /> : <Navigate to='/' />} />
         <Route path='/user/edit/:id' element={currentUser ? <EditUser /> : <Navigate to='/' />} />
         <Route path='/adduser' element={currentUser ? <AddUser /> : <Navigate to='/' />} />
         <Route path='/product' element={currentUser ? <Product /> : <Navigate to='/' />} />
@@ -52,6 +55,7 @@ function App() {
         <Route path='/addSeller' element={currentUser ? <AddSeller /> : <Navigate to='/' />} />
         <Route path='/addExpense' element={currentUser ? <AddEpense /> : <Navigate to='/' />} />
         <Route path='/addMarket' element={currentUser ? <AddMarket /> : <Navigate to='/' />} />
+        <Route path='/addHistory' element={currentUser ? <AddHistory /> : <Navigate to='/' />} />
         <Route path='/Customer' element={currentUser ? <Order /> : <Navigate to='/' />} />
         <Route path='/addCustomer' element={currentUser ? <AddOrder /> : <Navigate to='/' />} />
         <Route path='/addCustomers' element={currentUser ? <AddOrderID /> : <Navigate to='/' />} />
@@ -74,7 +78,7 @@ function App() {
         <Route path='/History' element={currentUser ? <History /> : <Navigate to='/' />} />
         <Route path='/Details' element={currentUser ? <Details /> : <Navigate to='/' />} />
       </Routes>
-
+      
       <ToastContainer
         position='top-center'
         autoClose={2000}
