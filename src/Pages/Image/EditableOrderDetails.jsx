@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import API_BASE_URL from "../../config";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const EditableProductDetails = ({ product, onSave }) => {
+const EditableOrderDetails = ({ product, productId, onSave }) => {
   const [editedProduct, setEditedProduct] = useState(product);
   const [productTypes, setProductTypes] = useState();
+  
 
   useEffect(() => {
     setEditedProduct(product);
@@ -379,7 +380,7 @@ const EditableProductDetails = ({ product, onSave }) => {
             >
               Save
             </button>
-            <Link to="/product">
+            <Link to={`/search/${productId}`}>
               <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                 Back
               </button>
@@ -391,4 +392,4 @@ const EditableProductDetails = ({ product, onSave }) => {
   );
 };
 
-export default EditableProductDetails;
+export default EditableOrderDetails;

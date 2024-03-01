@@ -4,8 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 
-
-const ProductDetails = ({ product,marketData }) => {
+const ProductDetails = ({ product, marketData }) => {
   const {
     product_name,
     product_id,
@@ -35,13 +34,13 @@ const ProductDetails = ({ product,marketData }) => {
 
     if (Array.isArray(product_image)) {
       const images = product_image.map((imagePath) => {
-        return imagePath; // Assuming imagePath already contains the "data:image" prefix
+        return imagePath;
       });
 
-   //   console.log("Image Src List:", images);
+      console.log("Image Src List:", images);
       setImageSrcList(images);
     } else {
-    //  console.error("Product images are not in the expected format:", product_image);
+      console.error("Product images are not in the expected format:", product_image);
     }
   }, [product_image]);
 
@@ -82,16 +81,14 @@ const ProductDetails = ({ product,marketData }) => {
         </div>
 
         <div className="max-w-md w-full md:w-1/2  p-4 rounded-lg">
-          <h2 className="text-xl font-semibold mb-2">Name : {product_name}</h2>
-          <p className="text-gray-800 font-semibold mb-2">Description : {Description}</p>
+          <h2 className="text-xl font-semibold mb-2">Name : <span>{product_name} </span></h2>
+          {/* <p className="text-gray-800 font-semibold mb-2">Description : {Description}</p> */}
           <p className="text-gray-800 font-semibold mb-2">product ID : {product_id}</p>
           <p className="text-gray-800 font-semibold mb-2">product Price : ₹ {product_price}</p>
-          <p className="text-gray-800 font-semibold mb-2">Cost price : ₹ {Cost_price}</p>
-          <p className="text-gray-800 font-semibold mb-2">Other price : ₹ {other_cost}</p>
           <p className="text-gray-800 font-semibold mb-2">Total price : ₹ {Final_cost}</p>
           <p className="text-gray-800 font-semibold mb-2">Type : {product_type}</p>
           <p className="text-gray-800 font-semibold mb-2">Stocks : {Stock}</p>
-          
+
           {marketData &&
             Array.isArray(marketData) &&
             marketData.map((marketItem) => (
@@ -105,7 +102,6 @@ const ProductDetails = ({ product,marketData }) => {
 
               </div>
             ))}
-
 
           <div className="flex items-center">
             <p className="text-gray-600 mr-2">Sizes:</p>
@@ -127,24 +123,16 @@ const ProductDetails = ({ product,marketData }) => {
       </div>
 
       <div className="flex gap-6">
-        <Link to="/Search">
+        <Link to="/Product">
           <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
             Back
           </button>
         </Link>
-        
         <Link to={`/addCustomers?productId=${product_id}`}>
           <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
             Order
           </button>
         </Link>
-
-        <Link to={`/Search/edit/${product_id}`}>
-          <button className="group relative w-[100px] h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-            Edit 
-          </button>
-        </Link>
-
       </div>
     </div>
   );

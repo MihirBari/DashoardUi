@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-
+import axios from "axios";
+import API_BASE_URL from "../../config";
 
 const FilterModal = ({
   isOpen,
   onClose,
   onApplyFilters,
-  users,
   resetFilters,
 }) => {
   const [paidStatus, setPaidStatus] = useState("");
   const [paymentmode, setPaymentmode] = useState("");
   const [clearanceStatus, setClearanceStatus] = useState("");
+  const [paidBy, setPaidBy] = useState("");
+  const [paidBys, setPaidBys] = useState([]);
   const [costPriceMin, setCostPriceMin] = useState("");
   const [costPriceMax, setCostPriceMax] = useState("");
   const [dateFilterType, setDateFilterType] = useState("");
@@ -19,31 +21,40 @@ const FilterModal = ({
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  const applyFilters = () => {
-    const filters = {
-      paidStatus,
-      paymentmode,
-      clearanceStatus,
-      costPriceMin,
-      costPriceMax,
-      dateFilterType,
-      selectedDate: dateFilterType !== "between" ? selectedDate : null,
-      startDate: dateFilterType === "between" ? startDate : null,
-      endDate: dateFilterType === "between" ? endDate : null,
+  useEffect(() => {
+    const fetchPaidBy = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/expense/paidBy`);
+        setPaidBys(response.data);
+      } catch (error) {
+        console.error("Error fetching product types:", error.message);
+      }
     };
 
-    // Convert date values to "yyyy-MM-dd" format
-    if (filters.selectedDate) {
-      filters.selectedDate = new Date(selectedDate).toISOString().split("T")[0];
-    }
-    if (filters.startDate) {
-      filters.startDate = new Date(startDate).toISOString().split("T")[0];
-    }
-    if (filters.endDate) {
-      filters.endDate = new Date(endDate).toISOString().split("T")[0];
-    }
+    fetchPaidBy();
+  }, []);
 
-    onApplyFilters(filters);
+  const applyFilters = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/expense/showExpense`, {
+        params: {
+          paidStatus,
+          paidBy,
+          paymentmode,
+          clearanceStatus,
+          costPriceMin,
+          costPriceMax,
+          dateFilterType,
+          selectedDate: dateFilterType !== "between" ? selectedDate : null,
+          startDate: dateFilterType === "between" ? startDate : null,
+          endDate: dateFilterType === "between" ? endDate : null,
+        }
+      });
+      console.log( response.data.total)
+      onApplyFilters(response.data.products,  response.data.total[0]); 
+    } catch (error) {
+      console.error("Error applying filters:", error.message);
+    }
   };
 
   const handleResetFilters = () => {
@@ -52,6 +63,7 @@ const FilterModal = ({
     setClearanceStatus("");
     setCostPriceMin("");
     setCostPriceMax("");
+    setPaidBy("");
     setDateFilterType("");
     setSelectedDate(new Date().toISOString().split("T")[0]);
     setStartDate(null);
@@ -90,8 +102,11 @@ const FilterModal = ({
 
         <select
           value={paymentmode}
-          onChange={(e) => setPaymentmode(e.target.value)}
+          onChange={(e) => setPaymentmode(
+            Array.from(e.target.selectedOptions, (option) => option.value)
+          )}
           className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+          multiple
         >
           <option value="">Select Payment Mode</option>
           <option value="UPI">UPI</option>
@@ -117,6 +132,25 @@ const FilterModal = ({
           <option value="">Select Clearance Status</option>
           <option value="Yes">Yes</option>
           <option value="No">No</option>
+        </select>
+
+        <select
+          value={paidBy}
+          onChange={(e) =>
+            setPaidBy(
+              Array.from(e.target.selectedOptions, (option) => option.value)
+            )
+          }
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+          multiple
+        >
+          <option value="">Select Paid By</option>
+          {paidBys &&
+            paidBys.map((type, index) => (
+              <option key={index} value={type}>
+                {type}
+              </option>
+            ))}
         </select>
 
         <input

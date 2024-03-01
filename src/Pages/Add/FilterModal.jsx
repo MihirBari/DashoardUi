@@ -7,76 +7,108 @@ const FilterModal = ({
   isOpen,
   onClose,
   onApplyFilters,
-  users,
-  resetFilters,
+  resetFilters
 }) => {
-  const [searchText, setSearchText] = useState("");
   const [productName, setProductName] = useState("");
-  const [productType, setProductType] = useState("");
-  const [status, setStatus] = useState("");
+  const [amountCredited, setAmountCredited] = useState("");
+  const [returned, setReturned] = useState("");
+  const [orderId, setOrderId] = useState("");
+  const [soldBy, setSoldBy] = useState("");
+  const [soldBys, setSoldBys] = useState([]);
+  const [city, setCity] = useState("");
+  const [citys, setCitys] = useState([]);
+  const [size, setSize] = useState([]);
+  const [deliveryStatus, setDeliveryStatus] = useState("");
   const [costPriceMin, setCostPriceMin] = useState("");
   const [costPriceMax, setCostPriceMax] = useState("");
   const [dateFilterType, setDateFilterType] = useState("");
-  const [productTypes, setProductTypes] = useState([]); // Initialize as empty array
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  ); // Today's date
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [orderIds, setOrderIds] = useState([]);
 
   useEffect(() => {
-    fetchProductTypes();
+    const fetchorderIds = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/order/orderID`);
+        setOrderIds(response.data);
+      } catch (error) {
+        console.error("Error fetching product types:", error.message);
+      }
+    };
+    fetchorderIds();
   }, []);
 
-  const fetchProductTypes = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/prod/productType`);
-      setProductTypes(response.data);
-    } catch (error) {
-      console.error("Error fetching product types:", error.message);
-    }
-  };
-
-  const applyFilters = () => {
-    const filters = {
-      searchText,
-      productName,
-      productType,
-      status,
-      costPriceMin,
-      costPriceMax,
-      dateFilterType,
-      selectedDate: dateFilterType !== "between" ? selectedDate : null,
-      startDate: dateFilterType === "between" ? startDate : null,
-      endDate: dateFilterType === "between" ? endDate : null,
+  useEffect(() => {
+    const fetchCity = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/order/city`);
+        setCitys(response.data);
+      } catch (error) {
+        console.error("Error fetching product types:", error.message);
+      }
     };
+    fetchCity();
+  }, []);
 
-    // Convert date values to "yyyy-MM-dd" format
-    if (filters.selectedDate) {
-      filters.selectedDate = new Date(selectedDate).toISOString().split("T")[0];
-    }
-    if (filters.startDate) {
-      filters.startDate = new Date(startDate).toISOString().split("T")[0];
-    }
-    if (filters.endDate) {
-      filters.endDate = new Date(endDate).toISOString().split("T")[0];
-    }
+  useEffect(() => {
+    const fetchSoldBy = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/order/paidBy`);
+        setSoldBys(response.data);
+      } catch (error) {
+        console.error("Error fetching product types:", error.message);
+      }
+    };
+    fetchSoldBy();
+  }, []);
 
-    onApplyFilters(filters);
+
+  const applyFilters = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/order/viewOrder`, {
+        params: {
+          productName,
+          orderId,
+          soldBy,
+          amountCredited,
+          returned,
+          city,
+          size,
+          deliveryStatus,
+          costPriceMin,
+          costPriceMax,
+          dateFilterType,
+          selectedDate: dateFilterType !== "between" ? selectedDate : null,
+          startDate: dateFilterType === "between" ? startDate : null,
+          endDate: dateFilterType === "between" ? endDate : null,
+        },
+      });
+      console.log("Server Response:", response.data); // Log the response
+      onApplyFilters(response.data.products, response.data.total[0]);
+    } catch (error) {
+      console.error("Error applying filters:", error.message);
+    }
   };
 
   const handleResetFilters = () => {
-    setSearchText("");
+    // Reset all filter states to their initial values
     setProductName("");
-    setProductType("");
-    setStatus("");
+    setAmountCredited("");
+    setReturned("");
+    setOrderId("");
+    setSoldBy("");
+    setCity("");
+    setSize("");
+    setDeliveryStatus("");
     setCostPriceMin("");
     setCostPriceMax("");
     setDateFilterType("");
-    setSelectedDate(new Date().toISOString().split("T")[0]);
+    setSelectedDate("");
     setStartDate(null);
     setEndDate(null);
-    resetFilters();
+
+    resetFilters(); // Reset filters in parent component if needed
   };
 
   return (
@@ -95,19 +127,6 @@ const FilterModal = ({
       }}
     >
       <div className="filter-modal">
-        {/* Filter inputs */}
-        {/* <select
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-        >
-          <option value="">Search by Product ID</option>
-          {users.map((user) => (
-            <option key={user.product_id} value={user.product_id}>
-              {user.product_id}
-            </option>
-          ))}
-        </select> */}
 
         <input
           type="text"
@@ -118,13 +137,16 @@ const FilterModal = ({
         />
 
         <select
-          value={productType}
-          onChange={(e) => setProductType(e.target.value)}
+          value={orderId}
+          onChange={(e) => setOrderId(
+            Array.from(e.target.selectedOptions, (option) => option.value)
+          )}
           className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+        multiple
         >
-          <option value="">Select Product Type</option>
-          {productTypes &&
-           productTypes.map((type, index) => (
+          <option value="">Select Product ID</option>
+          {orderIds &&
+           orderIds.map((type, index) => (
             <option key={index} value={type}>
               {type}
             </option>
@@ -132,15 +154,92 @@ const FilterModal = ({
         </select>
 
         <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          value={soldBy}
+          onChange={(e) => setSoldBy(
+            Array.from(e.target.selectedOptions, (option) => option.value)
+          )}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+        multiple
+        >
+          <option value="">Select Sold By</option>
+          {soldBys &&
+           soldBys.map((type, index) => (
+            <option key={index} value={type}>
+              {type}
+            </option>
+               ))}
+        </select>
+
+        <select
+          value={city}
+          onChange={(e) => setCity(
+            Array.from(e.target.selectedOptions, (option) => option.value)
+          )}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+        multiple
+        >
+          <option value="">Select City</option>
+          {citys &&
+           citys.map((type, index) => (
+            <option key={index} value={type}>
+              {type}
+            </option>
+            ))}
+        </select>
+
+        <select
+          value={amountCredited}
+          onChange={(e) => setAmountCredited(e.target.value)}
           className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
         >
-          <option value="">Select Status</option>
-          <option value="active">Active</option>
-          <option value="Close">Close</option>
-          <option value="upcoming">upcoming</option>
-          <option value="Draft">Draft</option>
+          <option value="">Select Amount Credited</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+
+        <select
+          value={returned}
+          onChange={(e) => setReturned(e.target.value)}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+        >
+          <option value="">Returned</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+
+        <select
+          value={deliveryStatus}
+          onChange={(e) => setDeliveryStatus(
+            Array.from(e.target.selectedOptions, (option) => option.value)
+          )}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+       multiple
+       >
+          <option value="">Delivery</option>
+          <option value="In process">In process</option>
+          <option value="In transit">In transit</option>
+          <option value="Completed">Completed</option>
+          <option value="Returned">Returned</option>
+        </select>
+
+        <select
+          value={size}
+          onChange={(e) => setSize(
+            Array.from(e.target.selectedOptions, (option) => option.value)
+          )}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+        multiple
+        >
+          <option value="">Select Size</option>
+          <option value="s">S</option>
+                      <option value="m">M</option>
+                      <option value="l">L</option>
+                      <option value="xl">XL</option>
+                      <option value="xxl">2XL</option>
+                      <option value="xxxl">3XL</option>
+                      <option value="xxxxl">4XL</option>
+                      <option value="xxxxxl">5XL</option>
+                      <option value="xxxxxxl">6XL</option>
         </select>
 
         <input

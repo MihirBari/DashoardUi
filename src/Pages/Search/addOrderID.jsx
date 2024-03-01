@@ -5,6 +5,7 @@ import API_BASE_URL from "../../config";
 import axios from "axios";
 
 const AddOrderID = () => {
+  const [productImage, setProductImage] = useState(null);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const productIdFromLink = queryParams.get("productId");
@@ -17,10 +18,30 @@ const AddOrderID = () => {
     paid_by: "",
     amount_condition: "",
     returned: "no",
+    delivery_status:"",
+    bank_payment:"",
+    city:""
   };
 
   const [inputs, setInputs] = useState(initialInputs);
   const navigate = useNavigate();
+
+    const fetchProductImage = async (productId) => {
+      try {
+        const response = await axios.post(
+          `${API_BASE_URL}/api/order/OrderImage`,
+          {
+            product_id: productId,
+          }
+        );
+        const publicId = response.data[0].publicId; // Accessing publicId from the first element of the array
+        console.log("Public ID:", publicId);
+        setProductImage(publicId);
+      } catch (error) {
+        console.error("Error fetching product image:", error);
+      }
+    };
+
 
   useEffect(() => {
     console.log("Product ID from link:", productIdFromLink);
@@ -30,6 +51,7 @@ const AddOrderID = () => {
         ...prevInputs,
         product_id: productIdFromLink,
       }));
+      fetchProductImage(productIdFromLink);
     }
   }, [productIdFromLink]);
 
@@ -91,6 +113,7 @@ const AddOrderID = () => {
     }
   };
 
+ 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -98,6 +121,7 @@ const AddOrderID = () => {
           Add Order
         </h2>
       </div>
+      <div className="flex justify-center items-center">
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6">
@@ -181,6 +205,8 @@ const AddOrderID = () => {
                   />
                 </div>
               </div>
+
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Sizes
@@ -207,7 +233,71 @@ const AddOrderID = () => {
                   </select>
                 </div>
               </div>
+            
+              <div>
+                  <label
+                    htmlFor="delivery_status"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Delivery Status
+                  </label>
+                  <div className="mt-1 relative">
+                    <select
+                      name="delivery_status"
+                      required
+                      onChange={handleChange}
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    >
+                      <option value=" " disabled selected>
+                        Select Option
+                      </option>
+                      <option value="In process">In process</option>
+                      <option value="In transit">In transit</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Returned">Returned</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="bank_payment"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Bank Payment
+                  </label>
+                  <div className="mt-1 relative">
+                    <input
+                      type="number"
+                      name="bank_payment"
+                      required
+                      onChange={handleChange}
+                      placeholder="Enter Amount "
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="city"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    City
+                  </label>
+                  <div className="mt-1 relative">
+                    <input
+                      type="text"
+                      name="city"
+                      required
+                      onChange={handleChange}
+                      placeholder="City"
+                      className=" appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
             </div>
+
 
             <div className="flex justify-between items-center mt-4">
               <Link to="/Customer">
@@ -225,6 +315,17 @@ const AddOrderID = () => {
               </Link>
             </div>
           </form>
+        </div>
+      </div>
+      <div className="flex justify-center items-center">
+          {productImage && (
+            <img
+              style={{ height: "300px", width: "300px" }}
+              src={`https://res.cloudinary.com/dgcxd0kkk/image/upload/${productImage}`}
+              alt="Product"
+              className="max-w-full h-auto"
+            />
+          )}
         </div>
       </div>
     </div>

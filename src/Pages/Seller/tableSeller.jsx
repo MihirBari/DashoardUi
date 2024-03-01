@@ -11,28 +11,33 @@ import ExportTable from "./ExportTable";
 import FilterModal from "./FilterModal";
 import { CiFilter } from "react-icons/ci";
 import DeleteConfirmationDialog from "../Product/DeleteConfirmationDialog";
+import DetailModal from "./DetailModal";
+import { FcViewDetails } from "react-icons/fc";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const [exportModalIsOpen, setExportModalIsOpen] = useState(false);
   const [filterModalIsOpen, setFilterModalIsOpen] = useState(false);
+  const [filterModalIsOpens, setFilterModalIsOpens] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [paidStatus, setPaidStatus] = useState("");
-  const [paymentmode, setPaymentmode] = useState("");
-  const [clearanceStatus, setClearanceStatus] = useState("");
-  const [productType, setProductType] = useState("");
-  const [costPriceMin, setCostPriceMin] = useState("");
-  const [costPriceMax, setCostPriceMax] = useState("");
-  const [dateFilterType, setDateFilterType] = useState("");
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  ); // Today's date
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [filteredDataForDetailModal, setFilteredDataForDetailModal] =
+    useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State variable for delete confirmation dialog
   const [deleteItemId, setDeleteItemId] = useState(null);
+  const [filters, setFilters] = useState({
+    paidStatus: " ",
+    paymentmode: " ",
+    clearanceStatus: "",
+    paidBy: "",
+    costPriceMin: "",
+    productType: "",
+    costPriceMax: "",
+    dateFilterType: "",
+    selectedDate: "",
+    startDate: "",
+    endDate: "",
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -40,18 +45,20 @@ const Users = () => {
         const response = await axios.get(
           `${API_BASE_URL}/api/dealer/showDealer`
         );
-        setUsers(response.data);
-        setFilteredUsers(response.data); // Set filtered users initially to all users
+        setUsers(response.data.dealers);
+        setFilteredUsers(response.data.dealers);
+        setFilteredDataForDetailModal(response.data.total[0]) 
       } catch (err) {
         console.error("Error fetching orders:", err);
       }
     };
 
     fetchOrders();
-
-    // Reset filters when component mounts
-    resetFilters();
   }, []);
+
+  const handleCiDetailClick = () => {
+    setFilterModalIsOpens(true);
+  };
 
   const handleEditClick = (userId) => {
     navigate(`edit/${userId.id}`);
@@ -69,7 +76,7 @@ const Users = () => {
         console.error("Error deleting:", error);
       });
   };
-  
+
   // Function to handle closing the delete confirmation dialog
   const handleCloseDeleteConfirmation = () => {
     setDeleteItemId(null);
@@ -81,7 +88,7 @@ const Users = () => {
     setDeleteItemId(row.id);
     setShowDeleteConfirmation(true);
   };
-  
+
   const handleViewClick = (row) => {
     navigate(`${row.id}`);
   };
@@ -277,93 +284,24 @@ const Users = () => {
     },
   };
 
-  const applyFilters = (filters) => {
-    const {
-      paidStatus,
-      paymentmode,
-      clearanceStatus,
-      costPriceMin,
-      costPriceMax,
-      dateFilterType,
-      selectedDate,
-      startDate,
-      endDate,
-    } = filters;
-
-    const filteredUsers = users.filter((user) => {
-      const paidStatusMatch =
-        !paidStatus ||
-        user.paid_status.toLowerCase() === paidStatus.toLowerCase();
-      const paymentModeMatch =
-        !paymentmode ||
-        user.payment_mode.toLowerCase() === paymentmode.toLowerCase();
-      const clearanceStatusMatch =
-        !clearanceStatus ||
-        user.company_paid.toLowerCase() === clearanceStatus.toLowerCase();
-      const productTypeMatch =
-        !productType ||
-        user.product_type.toLowerCase().includes(productType.toLowerCase());
-      const costPriceInRange =
-        (!costPriceMin || user.amount >= Number(costPriceMin)) &&
-        (!costPriceMax || user.amount <= Number(costPriceMax));
-
-      let dateMatch = true;
-      const userDate = new Date(
-        user.debitor_Date.split("/").reverse().join("-")
-      ); // Convert user's date format to compatible format
-
-      if (dateFilterType === "equal" && selectedDate) {
-        const selectedDateValue = new Date(
-          selectedDate.split("/").reverse().join("-")
-        ); // Convert selected date format to compatible format
-        dateMatch =
-          userDate.toISOString().split("T")[0] ===
-          selectedDateValue.toISOString().split("T")[0];
-      } else if (dateFilterType === "before" && selectedDate) {
-        const selectedDateValue = new Date(
-          selectedDate.split("/").reverse().join("-")
-        ); // Convert selected date format to compatible format
-        dateMatch = userDate < selectedDateValue;
-      } else if (dateFilterType === "after" && selectedDate) {
-        const selectedDateValue = new Date(
-          selectedDate.split("/").reverse().join("-")
-        ); // Convert selected date format to compatible format
-        dateMatch = userDate > selectedDateValue;
-      } else if (dateFilterType === "between" && startDate && endDate) {
-        const startDateValue = new Date(
-          startDate.split("/").reverse().join("-")
-        ); // Convert start date format to compatible format
-        const endDateValue = new Date(endDate.split("/").reverse().join("-")); // Convert end date format to compatible format
-        dateMatch = userDate >= startDateValue && userDate <= endDateValue;
-      }
-
-      return (
-        paidStatusMatch &&
-        productTypeMatch &&
-        paymentModeMatch &&
-        clearanceStatusMatch &&
-        costPriceInRange &&
-        dateMatch
-      );
-    });
-
-    setFilteredUsers(filteredUsers);
+  const onApplyFilters = (filteredData, filteredTotalData) => {
+    setFilteredUsers(filteredData);
+    setFilteredDataForDetailModal(filteredTotalData); // Set filteredTotalData
+    setFilterModalIsOpen(false);
   };
 
-  const resetFilters = () => {
-    setPaidStatus("");
-    setPaymentmode("");
-    setClearanceStatus("");
-    setProductType("");
-    setCostPriceMin("");
-    setCostPriceMax("");
-    setDateFilterType("");
-    setSelectedDate(new Date().toISOString().split("T")[0]);
-    setStartDate(null);
-    setEndDate(null);
-
-    // Reset the filtered users to all users
-    setFilteredUsers(users);
+  const initialFilters = {
+    paidStatus: "",
+    paymentmode: "",
+    clearanceStatus: "",
+    paidBy: "",
+    productType: "",
+    costPriceMin: "",
+    costPriceMax: "",
+    dateFilterType: "",
+    selectedDate: "",
+    startDate: "",
+    endDate: "",
   };
 
   const handleCiFilterClick = () => {
@@ -392,14 +330,23 @@ const Users = () => {
             style={{ marginLeft: "25px" }}
             onClick={handleCiFilterClick}
           />
+          <FcViewDetails
+            size={40}
+            style={{ marginLeft: "25px" }}
+            onClick={handleCiDetailClick}
+          />
           <FilterModal
             isOpen={filterModalIsOpen}
             onClose={() => setFilterModalIsOpen(false)}
-            onApplyFilters={applyFilters}
+            onApplyFilters={onApplyFilters}
             users={users}
-            resetFilters={resetFilters}
+            resetFilters={() => setFilters(initialFilters)}
           />
-
+          <DetailModal
+            isOpen={filterModalIsOpens}
+            onClose={() => setFilterModalIsOpens(false)}
+            filteredData={filteredDataForDetailModal}
+          />
           <DeleteConfirmationDialog
             isOpen={showDeleteConfirmation}
             onClose={handleCloseDeleteConfirmation}

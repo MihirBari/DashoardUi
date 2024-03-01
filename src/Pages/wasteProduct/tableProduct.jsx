@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import DataTable, { createTheme } from "react-data-table-component";
+import DataTable, {createTheme} from "react-data-table-component";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import API_BASE_URL from "../../config";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CiFilter } from "react-icons/ci";
 import ExportTable from "./ExportTable";
 import FilterModal from "./FilterModal";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
-import { FcViewDetails } from "react-icons/fc";
-import DetailModal from "../Seller/DetailModal";
 
 const TableProduct = () => {
   const [users, setUsers] = useState([]);
@@ -19,10 +17,7 @@ const TableProduct = () => {
   const [exportModalIsOpen, setExportModalIsOpen] = useState(false);
   const navigate = useNavigate();
   const [filterModalIsOpen, setFilterModalIsOpen] = useState(false);
-  const [filterModalIsOpens, setFilterModalIsOpens] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [filteredDataForDetailModal, setFilteredDataForDetailModal] =
-    useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
   const [filters, setFilters] = useState({
@@ -30,6 +25,7 @@ const TableProduct = () => {
     productType: "",
     costPriceMin: "",
     costPriceMax: "",
+    status:"",
     dateFilterType: "",
     selectedDate: "",
     startDate: "",
@@ -40,15 +36,11 @@ const TableProduct = () => {
     setFilterModalIsOpen(true);
   };
 
-  const handleCiDetailClick = () => {
-    setFilterModalIsOpens(true);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const ordersResponse = await axios.get(
-          `${API_BASE_URL}/api/prod/inventory`
+          `${API_BASE_URL}/api/prod/wasteProduct`
         );
         const marketResponse = await axios.get(
           `${API_BASE_URL}/api/market/showMarket`
@@ -64,7 +56,6 @@ const TableProduct = () => {
         setMarket(marketData.data);
         setFilteredUsers(ordersData);
         console.log(orders.data);
-        setFilteredDataForDetailModal(orders.data.total[0]);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -73,12 +64,12 @@ const TableProduct = () => {
     fetchData();
   }, []);
 
-  const handleEditClick = (row) => {
-    navigate(`edit/${row.product_id}`);
-  };
+  // const handleEditClick = (row) => {
+  //   navigate(`edit/${row.product_id}`);
+  // };
 
   const handleDeleteConfirmation = (itemId) => {
-    const productId = itemId;
+    const productId = itemId; 
     axios
       .delete(`${API_BASE_URL}/api/prod/delete`, { data: { productId } })
       .then((response) => {
@@ -219,7 +210,11 @@ const TableProduct = () => {
     },
     {
       name: "Edit",
-      cell: (row) => <MdEdit onClick={() => handleEditClick(row)} />,
+      cell: (row) => (
+        <Link to={`/product/edit/${row.product_id}`}>
+          <MdEdit />
+        </Link>
+      ),
       button: true,
     },
     {
@@ -279,16 +274,16 @@ const TableProduct = () => {
     },
   };
 
-  const onApplyFilters = (filteredData, filteredTotalData) => {
+  const onApplyFilters = (filteredData) => {
     setFilteredUsers(filteredData);
-    setFilteredDataForDetailModal(filteredTotalData); // Set filteredTotalData
+
     setFilterModalIsOpen(false);
   };
 
   const initialFilters = {
     productName: "",
     productType: "",
-
+    status:"",
     costPriceMin: "",
     costPriceMax: "",
     dateFilterType: "",
@@ -317,11 +312,6 @@ const TableProduct = () => {
           style={{ marginLeft: "25px" }}
           onClick={handleCiFilterClick}
         />
-        <FcViewDetails
-          size={40}
-          style={{ marginLeft: "25px" }}
-          onClick={handleCiDetailClick}
-        />
       </div>
       <FilterModal
         isOpen={filterModalIsOpen}
@@ -330,17 +320,13 @@ const TableProduct = () => {
         filters={filters}
         resetFilters={() => setFilters(initialFilters)}
       />
-      <DetailModal
-        isOpen={filterModalIsOpens}
-        onClose={() => setFilterModalIsOpens(false)}
-        filteredData={filteredDataForDetailModal}
-      />
+
       <DeleteConfirmationDialog
         isOpen={showDeleteConfirmation}
         onClose={handleCloseDeleteConfirmation}
         onDelete={() => {
-          handleDeleteConfirmation(deleteItemId);
-          handleCloseDeleteConfirmation();
+          handleDeleteConfirmation(deleteItemId); 
+          handleCloseDeleteConfirmation(); 
         }}
       />
 

@@ -14,7 +14,8 @@ const EditOrder = () => {
     returned: "No",
     paid_by: "",
     bank_payment:"",
-    city:""
+    city:"",
+    delivery_status:""
   };
 
   const { order_id } = useParams();
@@ -110,17 +111,17 @@ const EditOrder = () => {
               </div>
               <div>
                 {renderSelect("amount_condition", "Amount Credited", [
-                  { value: "No", label: "No" },
-                  { value: "Yes", label: "Yes" },
+                  { value: "no", label: "No" },
+                  { value: "yes", label: "Yes" },
                 ])}
               </div>
               <div>
                 {renderSelect("returned", "Returned", [
 
-                  { value: "yes", label: "Yes" },
-                  { value: "no", label: "No" },
-                  { value: "yes Returned", label: "Yes Returned" },
-                  { value: "no Returned", label: "No Returned" },
+                  { value: "Yes", label: "Yes" },
+                  { value: "No", label: "No" },
+                  { value: "Yes Returned", label: "Yes Returned" },
+                  { value: "No Returned", label: "No Returned" },
                 ])}
               </div>
               <div>
@@ -128,6 +129,15 @@ const EditOrder = () => {
               </div>
               <div>
                 {renderInput("city", "City", "City")}
+              </div>
+              <div>
+                {renderSelect("delivery_status", "Delivery Status", [
+
+                  { value: "In process", label: "In process" },
+                  { value: "In transit", label: "No" },
+                  { value: "Completed", label: "Completed" },
+                  { value: "Returned", label: "Returned" },
+                ])}
               </div>
               <div>
                 {renderInputs("size", "Size","size",)}

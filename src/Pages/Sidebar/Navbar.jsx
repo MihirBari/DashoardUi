@@ -9,13 +9,13 @@ const SideNavBar = () => {
     { title: "Inventory", src: "Folder", link: "/Product" },
     { title: "User", src: "User", link: "/user" },
     { title: "Search", src: "Search", link: "/search" },
-    //{ title: "Dashboard", src: "Chart_fill", link: "/dashboard" },
     { title: "Orders", src: "Chart", link: "/Customer" },
     { title: "Seller", src: "Setting", link: "/Seller" },
     { title: "Expense", src: "Setting", link: "/Expense" },
     { title: "History", src: "Folder", link: "/History" },
     { title: "Market", src: "Folder", link: "/Market" },
     { title: "Details", src: "Folder", link: "/Details" },
+    { title: "NO Product", src: "Chart_fill", link: "/wasteProducts" },
   ];
 
   const handleTabClick = (index) => {

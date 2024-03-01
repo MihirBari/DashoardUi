@@ -6,33 +6,50 @@ import API_BASE_URL from "../../config";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { CiFilter } from "react-icons/ci";
+import FilterModal from "./FilterModal";
+import ExportTable from "./ExportTable";
+import DetailModal from "./DetailModal.jsx";
+import { FcViewDetails } from "react-icons/fc";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog.jsx";
 
 const TableOrder = () => {
   const [users, setUsers] = useState([]);
-  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
+  const [exportModalIsOpen, setExportModalIsOpen] = useState(false);
+  const [filterModalIsOpen, setFilterModalIsOpen] = useState(false);
+  const [filterModalIsOpens, setFilterModalIsOpens] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteredDataForDetailModal, setFilteredDataForDetailModal] =
+    useState(null);
+  const [orderData, setOrderData] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState(null);
+  const [filters, setFilters] = useState({
+    orderId: "",
+    soldBy: "",
+    amountCredited: "",
+    returned: "",
+    city: "",
+    costPriceMin: "",
+    costPriceMax: "",
+    dateFilterType: "",
+    size: "",
+    selectedDate: "",
+    startDate: "",
+    endDate: "",
+    deliveryStatus: "",
+  });
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/api/order/viewOrder`);
-        setUsers(response.data);
-        console.log(response.data);
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-      }
-    };
-
-    fetchOrders();
-  }, []);
-
-  const handleEditClick = (product_id) => {
-    console.log("Editing order with ID:", product_id);
-
-    navigate(`edit/${product_id}`);
+  const handleCiFilterClick = () => {
+    setFilterModalIsOpen(true);
   };
 
-  const handleDeleteClick = (row) => {
+  const handleCiDetailClick = () => {
+    setFilterModalIsOpens(true);
+  };
+
+  const handleDeleteConfirmation = (row) => {
     console.log("Row:", row);
 
     const sizeProperties = [
@@ -77,6 +94,38 @@ const TableOrder = () => {
         console.error("Error deleting:", error);
         toast.error("Error deleting order");
       });
+  };
+
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteItemId(null);
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleDeleteClick = (itemId) => {
+    setDeleteItemId(itemId); // Set the itemId to be deleted
+    setShowDeleteConfirmation(true); // Show the delete confirmation dialog
+  };
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/order/viewOrder`);
+        setUsers(response.data.products);
+        setOrderData(response.data.total[0]);
+        setFilteredDataForDetailModal(response.data.total[0]);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+      }
+    };
+
+    // Fetch orders without any filters when the component mounts
+    fetchOrders();
+  }, []); 
+
+  const handleEditClick = (product_id) => {
+    console.log("Editing order with ID:", product_id);
+
+    navigate(`edit/${product_id}`);
   };
 
   const columns = [
@@ -152,6 +201,12 @@ const TableOrder = () => {
       sortable: true,
     },
     {
+      name: "Delivery Status",
+      selector: (row) => row.delivery_status,
+      sortable: true,
+      width: "150px",
+    },
+    {
       name: "Bank Payment",
       selector: (row) => row.bank_payment,
       sortable: true,
@@ -209,12 +264,6 @@ const TableOrder = () => {
     ...col,
     header: <CustomHeader column={col} />,
   }));
-
-  const filteredUsers = users.filter(
-    (user) =>
-      user.product_id.toString().includes(searchText) ||
-      user.creditor_name.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   createTheme(
     "solarized",
@@ -276,15 +325,78 @@ const TableOrder = () => {
     },
   };
 
+  const onApplyFilters = (filteredData, filteredTotalData) => {
+    setFilteredUsers(filteredData);
+    setFilteredDataForDetailModal(filteredTotalData); // Set filteredTotalData
+    setFilterModalIsOpen(false);
+  };
+
+  const initialFilters = {
+    orderId: "",
+    soldBy: "",
+    amountCredited: "",
+    returned: "",
+    city: "",
+    costPriceMin: "",
+    costPriceMax: "",
+    dateFilterType: "",
+    size: "",
+    selectedDate: "",
+    startDate: "",
+    endDate: "",
+    deliveryStatus: ""
+  };
+
+  const handleExportClick = () => {
+    setExportModalIsOpen(true);
+  };
+
   return (
     <div className="order">
-      {/* <input
-        type="text"
-        placeholder="Search "
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-      /> */}
+      <div className="flex items-center">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={handleExportClick}
+        >
+          Export
+        </button>
+        <ExportTable
+          data={filteredUsers}
+          isOpen={exportModalIsOpen}
+          onRequestClose={() => setExportModalIsOpen(false)}
+        />
+        <CiFilter
+          size={40}
+          style={{ marginLeft: "25px" }}
+          onClick={handleCiFilterClick}
+        />
+        <FcViewDetails
+          size={40}
+          style={{ marginLeft: "25px" }}
+          onClick={handleCiDetailClick}
+        />
+      </div>
+      <FilterModal
+        isOpen={filterModalIsOpen}
+        onClose={() => setFilterModalIsOpen(false)}
+        onApplyFilters={onApplyFilters}
+        filters={filters}
+        resetFilters={() => setFilters(initialFilters)}
+      />
+      <DetailModal
+        isOpen={filterModalIsOpens}
+        onClose={() => setFilterModalIsOpens(false)}
+        orderData={orderData}
+        filteredData={filteredDataForDetailModal}
+      />
+      <DeleteConfirmationDialog
+        isOpen={showDeleteConfirmation}
+        onClose={handleCloseDeleteConfirmation}
+        onDelete={() => {
+          handleDeleteConfirmation(deleteItemId);
+          handleCloseDeleteConfirmation();
+        }}
+      />
       <DataTable
         className="dataTable"
         columns={modifiedColumns}
@@ -296,8 +408,8 @@ const TableOrder = () => {
         theme="solarized"
         pagination
         highlightOnHover
-        paginationPerPage={10}
-        paginationRowsPerPageOptions={[10, 20, 30]}
+        paginationPerPage={20}
+        paginationRowsPerPageOptions={[20, 40, 60]}
         paginationComponentOptions={{
           rowsPerPageText: "Rows per page:",
           rangeSeparatorText: "of",

@@ -349,7 +349,6 @@ const EditableProductDetails = ({ product, onSave }) => {
                 <option value="Close">Close</option>
                 <option value="upcoming">upcoming</option>
                 <option value="Draft">Draft</option>
-                <option value="InActive">InActive</option>
               </select>
             </div>
 

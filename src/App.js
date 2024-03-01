@@ -34,6 +34,8 @@ import ViewExpense from './Pages/Expense/ViewExpense.jsx';
 import ViewSeller from './Pages/Seller/ViewSeller.jsx';
 import AddHistory from './Pages/history/addHistory.jsx';
 import Dashboard from './Pages/Dashboad/Dashboad.jsx';
+import WasteProducts from './Pages/wasteProduct/WasteProducts.jsx';
+import { EditOrders } from './Pages/Image/EditOrders.jsx';
 
 
 function App() {
@@ -47,7 +49,8 @@ function App() {
         <Route path='/dashboard' element={currentUser ? <Dashboard /> : <Navigate to='/' />} />
         <Route path='/user/edit/:id' element={currentUser ? <EditUser /> : <Navigate to='/' />} />
         <Route path='/adduser' element={currentUser ? <AddUser /> : <Navigate to='/' />} />
-        <Route path='/product' element={currentUser ? <Product /> : <Navigate to='/' />} />
+        <Route path='/product' element={currentUser ? <Product /> : <Navigate to='/' />} />WasteProducts
+        <Route path='/wasteProducts' element={currentUser ? <WasteProducts /> : <Navigate to='/' />} />
         <Route path='/addProd' element={currentUser ? <AddProd /> : <Navigate to='/' />} />
         <Route path='/Seller' element={currentUser ? <Seller /> : <Navigate to='/' />} />
         <Route path='/Expense' element={currentUser ? <Expense /> : <Navigate to='/' />} />
@@ -72,6 +75,10 @@ function App() {
         <Route
           path='/Product/edit/:product_id'
           element={currentUser ? <EditProduct /> : <Navigate to='/' />}
+        />
+         <Route
+          path='/Search/edit/:product_id'
+          element={currentUser ? <EditOrders /> : <Navigate to='/' />}
         />
         <Route path='/Search' element={currentUser ? <Image /> : <Navigate to='/' />} />
         <Route path='/Search/:product_Id' element={currentUser ? <SearchProduct /> : <Navigate to='/' />} />

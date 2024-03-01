@@ -7,20 +7,28 @@ const FilterModal = ({
   isOpen,
   onClose,
   onApplyFilters,
-  users,
   resetFilters,
+  filters: initialFilters,
 }) => {
-  const [searchText, setSearchText] = useState("");
+  const [filters, setFilters] = useState(() => {
+    try {
+      const savedFilters = JSON.parse(localStorage.getItem("filters"));
+      if (savedFilters) {
+        return savedFilters;
+      }
+    } catch (error) {
+      console.error("Error retrieving filters from local storage:", error);
+    }
+    return initialFilters;
+  });
+
   const [productName, setProductName] = useState("");
   const [productType, setProductType] = useState("");
-  const [status, setStatus] = useState("");
   const [costPriceMin, setCostPriceMin] = useState("");
   const [costPriceMax, setCostPriceMax] = useState("");
   const [dateFilterType, setDateFilterType] = useState("");
-  const [productTypes, setProductTypes] = useState([]); // Initialize as empty array
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  ); // Today's date
+  const [productTypes, setProductTypes] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -37,48 +45,79 @@ const FilterModal = ({
     }
   };
 
+
+  useEffect(() => {
+    try {
+      if (productName || productType.length > 0 ||
+        costPriceMin || costPriceMax || dateFilterType || selectedDate || startDate || endDate) {
+        const filtersToSave = {
+          productName,
+          productType,
+          
+          costPriceMin,
+          costPriceMax,
+          dateFilterType,
+          selectedDate,
+          startDate,
+          endDate,
+        };
+        localStorage.setItem("filters", JSON.stringify(filtersToSave));
+      }
+    } catch (error) {
+      console.error("Error saving filters to local storage:", error);
+    }
+  }, [productName, productType, costPriceMin, costPriceMax, dateFilterType, selectedDate, startDate, endDate]);
+
+  useEffect(() => {
+    try {
+      const savedFilters = JSON.parse(localStorage.getItem("filters"));
+      if (savedFilters) {
+        setFilters(savedFilters);
+      } else {
+        setFilters(initialFilters);
+      }
+    } catch (error) {
+      console.error("Error retrieving filters from local storage:", error);
+      setFilters(initialFilters);
+    }
+  }, []);
+
   const handleResetFilters = () => {
-    setSearchText("");
+    setFilters(initialFilters);
+    resetFilters();
+  };
+
+  useEffect(() => {
     setProductName("");
     setProductType("");
-    setStatus("");
+   
     setCostPriceMin("");
     setCostPriceMax("");
     setDateFilterType("");
     setSelectedDate(new Date().toISOString().split("T")[0]);
     setStartDate(null);
     setEndDate(null);
-    resetFilters(); // Reset the filters without applying them immediately
+  }, [filters]);
+
+  const applyFilters = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/prod/inventory`, {
+        params: {
+          productName,
+          productType,
+          costPriceMin,
+          costPriceMax,
+          dateFilterType,
+          selectedDate: dateFilterType !== "between" ? selectedDate : null,
+          startDate: dateFilterType === "between" ? startDate : null,
+          endDate: dateFilterType === "between" ? endDate : null,
+        },
+      });
+      onApplyFilters(response.data.products, response.data.total[0]);
+    } catch (error) {
+      console.error("Error applying filters:", error.message);
+    }
   };
-
-  const applyFilters = () => {
-    const filters = {
-      searchText,
-      productName,
-      productType,
-      status,
-      costPriceMin,
-      costPriceMax,
-      dateFilterType,
-      selectedDate: dateFilterType !== "between" ? selectedDate : null,
-      startDate: dateFilterType === "between" ? startDate : null,
-      endDate: dateFilterType === "between" ? endDate : null,
-    };
-
-    // Convert date values to "yyyy-MM-dd" format
-    if (filters.selectedDate) {
-      filters.selectedDate = new Date(selectedDate).toISOString().split("T")[0];
-    }
-    if (filters.startDate) {
-      filters.startDate = new Date(startDate).toISOString().split("T")[0];
-    }
-    if (filters.endDate) {
-      filters.endDate = new Date(endDate).toISOString().split("T")[0];
-    }
-
-    onApplyFilters(filters); // Apply the filters only when "Apply Filters" button is clicked
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -88,14 +127,12 @@ const FilterModal = ({
           zIndex: 9999,
         },
         content: {
-          
-          height: '40%', // Set the height here, e.g., 50%
-          margin: 'auto', // Center the modal horizontally
+          height: "40%", 
+          margin: "auto",
         },
       }}
     >
       <div className="filter-modal">
-        
         <input
           type="text"
           placeholder="Product Name"
@@ -106,28 +143,21 @@ const FilterModal = ({
 
         <select
           value={productType}
-          onChange={(e) => setProductType(e.target.value)}
+          onChange={(e) =>
+            setProductType(
+              Array.from(e.target.selectedOptions, (option) => option.value)
+            )
+          }
           className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+          multiple
         >
           <option value="">Select Product Type</option>
           {productTypes &&
-           productTypes.map((type, index) => (
-            <option key={index} value={type}>
-              {type}
-            </option>
+            productTypes.map((type, index) => (
+              <option key={index} value={type}>
+                {type}
+              </option>
             ))}
-        </select>
-
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
-        >
-          <option value="">Select Status</option>
-          <option value="active">Active</option>
-          <option value="Close">Close</option>
-          <option value="upcoming">upcoming</option>
-          <option value="Draft">Draft</option>
         </select>
 
         <input
@@ -187,7 +217,6 @@ const FilterModal = ({
           </div>
         )}
 
-        {/* Apply and Cancel buttons */}
         <button
           onClick={() => {
             applyFilters();
@@ -198,6 +227,7 @@ const FilterModal = ({
         >
           Apply Filters
         </button>
+
         <button
           onClick={handleResetFilters}
           className="bg-red-500 text-white px-4 py-2 rounded"
@@ -205,6 +235,7 @@ const FilterModal = ({
         >
           Clear Filters
         </button>
+
         <button
           onClick={onClose}
           className="bg-blue-500 text-white px-4 py-2 rounded"

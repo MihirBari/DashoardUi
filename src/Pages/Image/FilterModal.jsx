@@ -7,19 +7,17 @@ const FilterModal = ({
   isOpen,
   onClose,
   onApplyFilters,
-  users,
   resetFilters,
+  filters: initialFilters,
 }) => {
-  const [paidStatus, setPaidStatus] = useState("");
-  const [paymentmode, setPaymentmode] = useState("");
-  const [clearanceStatus, setClearanceStatus] = useState("");
-  const [paidBy, setPaidBy] = useState("");
-  const [paidBys, setPaidBys] = useState([]);
+  const [filters, setFilters] = useState(initialFilters);
+  const [productName, setProductName] = useState("");
+  const [productType, setProductType] = useState("");
+  const [status, setStatus] = useState("");
   const [costPriceMin, setCostPriceMin] = useState("");
   const [costPriceMax, setCostPriceMax] = useState("");
   const [dateFilterType, setDateFilterType] = useState("");
-  const [productTypes, setProductTypes] = useState([]); 
-  const [productType, setProductType] = useState([]); 
+  const [productTypes, setProductTypes] = useState([]); // Initialize as empty array
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   ); // Today's date
@@ -39,59 +37,58 @@ const FilterModal = ({
     }
   };
 
-
   useEffect(() => {
-    const fetchPaidBy = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/api/dealer/paidBy`);
-        setPaidBys(response.data);
-      } catch (error) {
-        console.error("Error fetching product types:", error.message);
-      }
-    };
-
-    fetchPaidBy();
+    localStorage.setItem("filters", JSON.stringify(filters));
+    console.log("Filters saved to local storage:", filters);
+  }, [filters]);
+  
+  useEffect(() => {
+    const savedFilters = JSON.parse(localStorage.getItem("filters"));
+    if (savedFilters) {
+      setFilters(savedFilters);
+      console.log("Filters retrieved from local storage:", savedFilters);
+    }
   }, []);
 
+  const handleResetFilters = () => {
+    setFilters(initialFilters);
+    resetFilters(); // Reset filters in the parent component
+  };
+  
+  useEffect(() => {
+    // This useEffect will run after the state has been updated
+    setProductName(""); // Reset productName when resetting filters
+    setProductType(""); // Reset productType
+    setStatus(""); // Reset status
+    setCostPriceMin(""); // Reset costPriceMin
+    setCostPriceMax(""); // Reset costPriceMax
+    setDateFilterType(""); // Reset dateFilterType
+    setSelectedDate(new Date().toISOString().split("T")[0]); // Reset selectedDate
+    setStartDate(null); // Reset startDate
+    setEndDate(null); // Reset endDate
+  }, [filters]); // Run this effect whenever the filters state changes
 
   const applyFilters = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/dealer/showDealer`, {
+      const response = await axios.get(`${API_BASE_URL}/api/prod/sendImage`, {
         params: {
-          paidStatus,
-          paidBy,
-          paymentmode,
-          clearanceStatus,
-          productTypes,
+          productName,
+          productType,
+          status,
           costPriceMin,
           costPriceMax,
           dateFilterType,
           selectedDate: dateFilterType !== "between" ? selectedDate : null,
           startDate: dateFilterType === "between" ? startDate : null,
           endDate: dateFilterType === "between" ? endDate : null,
-        }
+        },
       });
-      onApplyFilters(response.data.dealers, response.data.total[0]); 
+      onApplyFilters(response.data);
     } catch (error) {
       console.error("Error applying filters:", error.message);
     }
   };
-
-  const handleResetFilters = () => {
-    setPaidStatus("");
-    setPaymentmode("");
-    setClearanceStatus("");
-    setProductType("");
-    setCostPriceMin("");
-    setCostPriceMax("");
-    setPaidBy("");
-    setDateFilterType("");
-    setSelectedDate(new Date().toISOString().split("T")[0]);
-    setStartDate(null);
-    setEndDate(null);
-    resetFilters();
-  };
-
+  
   return (
     <Modal
       isOpen={isOpen}
@@ -102,84 +99,26 @@ const FilterModal = ({
         },
         content: {
           
-          height: '50%', // Set the height here, e.g., 50%
+          height: '40%', // Set the height here, e.g., 50%
           margin: 'auto', // Center the modal horizontally
         },
       }}
     >
       <div className="filter-modal">
-  
-      <select
-          value={paidStatus}
-          onChange={(e) => setPaidStatus(e.target.value)}
+        
+        <input
+          type="text"
+          placeholder="Product Name"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
           className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
-        >
-          <option value="">Select Paid Status</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-
-        <select
-          value={paymentmode}
-          onChange={(e) => setPaymentmode(
-            Array.from(e.target.selectedOptions, (option) => option.value)
-          )}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
-          multiple
-        >
-          <option value="">Select Payment Mode</option>
-          <option value="UPI">UPI</option>
-                    <option value="Cash"  >
-                    Cash
-                    </option>
-                    <option value="net banking" >
-                    net banking
-                    </option>
-                    <option value="Mobile banking">Mobile banking</option>
-                    <option value="By company employee">By company employee</option>
-                    <option value="credit card">credit card</option>
-                    <option value="debit card">Debit card</option>
-                    <option value="bank transfer">bank transfer</option>
-                    <option value="others">others</option>
-        </select>
-
-        <select
-          value={clearanceStatus}
-          onChange={(e) => setClearanceStatus(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
-        >
-          <option value="">Select Company Payment Status</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-
-        <select
-          value={paidBy}
-          onChange={(e) =>
-            setPaidBy(
-              Array.from(e.target.selectedOptions, (option) => option.value)
-            )
-          }
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
-          multiple
-        >
-          <option value="">Select Paid By</option>
-          {paidBys &&
-            paidBys.map((type, index) => (
-              <option key={index} value={type}>
-                {type}
-              </option>
-            ))}
-        </select>
+        />
 
         <select
           value={productType}
-          onChange={(e) => setProductType(
-            Array.from(e.target.selectedOptions, (option) => option.value)
-          )}
+          onChange={(e) => setProductType(e.target.value)}
           className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
-         multiple
-      >
+        >
           <option value="">Select Product Type</option>
           {productTypes &&
            productTypes.map((type, index) => (
@@ -187,6 +126,18 @@ const FilterModal = ({
               {type}
             </option>
             ))}
+        </select>
+
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
+        >
+          <option value="">Select Status</option>
+          <option value="active">Active</option>
+          <option value="Close">Close</option>
+          <option value="upcoming">upcoming</option>
+          <option value="Draft">Draft</option>
         </select>
 
         <input
@@ -257,6 +208,7 @@ const FilterModal = ({
         >
           Apply Filters
         </button>
+
         <button
           onClick={handleResetFilters}
           className="bg-red-500 text-white px-4 py-2 rounded"
@@ -264,6 +216,7 @@ const FilterModal = ({
         >
           Clear Filters
         </button>
+
         <button
           onClick={onClose}
           className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -271,6 +224,7 @@ const FilterModal = ({
         >
           Cancel
         </button>
+        
       </div>
     </Modal>
   );
