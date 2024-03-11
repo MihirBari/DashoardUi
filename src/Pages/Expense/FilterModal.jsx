@@ -20,6 +20,7 @@ const FilterModal = ({
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Today's date
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [shouldApplyFilters, setShouldApplyFilters] = useState(false);
 
   useEffect(() => {
     const fetchPaidBy = async () => {
@@ -50,26 +51,87 @@ const FilterModal = ({
           endDate: dateFilterType === "between" ? endDate : null,
         }
       });
-      console.log( response.data.total)
-      onApplyFilters(response.data.products,  response.data.total[0]); 
+  
+      onApplyFilters(response.data.products, response.data.total[0]); 
+      // Update localStorage only if filters are applied successfully
+      localStorage.setItem('expenseFilters', JSON.stringify({
+        paidStatus,
+        paidBy,
+        paymentmode,
+        clearanceStatus,
+        costPriceMin,
+        costPriceMax,
+        dateFilterType,
+        selectedDate,
+        startDate,
+        endDate,
+      }));
     } catch (error) {
       console.error("Error applying filters:", error.message);
     }
   };
+  
+  const retrieveAndSetFilters = async() => {
+    // Retrieve filter values from localStorage
+    const storedFilters = localStorage.getItem('expenseFilters');
+    if (storedFilters) {
+      const {
+        paidStatus: storedPaidStatus,
+        paidBy: storedPaidBy,
+        paymentmode: storedPaymentmode,
+        clearanceStatus: storedClearanceStatus,
+        costPriceMin: storedCostPriceMin,
+        costPriceMax: storedCostPriceMax,
+        dateFilterType: storedDateFilterType,
+        selectedDate: storedSelectedDate,
+        startDate: storedStartDate,
+        endDate: storedEndDate,
+      } = JSON.parse(storedFilters);
 
-  const handleResetFilters = () => {
-    setPaidStatus("");
-    setPaymentmode("");
-    setClearanceStatus("");
-    setCostPriceMin("");
-    setCostPriceMax("");
-    setPaidBy("");
-    setDateFilterType("");
-    setSelectedDate(new Date().toISOString().split("T")[0]);
-    setStartDate(null);
-    setEndDate(null);
-    resetFilters();
+      // Set filter values to state
+      setPaidStatus(storedPaidStatus);
+      setPaidBy(storedPaidBy);
+      setPaymentmode(storedPaymentmode);
+      setClearanceStatus(storedClearanceStatus);
+      setCostPriceMin(storedCostPriceMin);
+      setCostPriceMax(storedCostPriceMax);
+      setDateFilterType(storedDateFilterType);
+      setSelectedDate(storedSelectedDate);
+      setStartDate(storedStartDate);
+      setEndDate(storedEndDate);
+
+      setShouldApplyFilters(true);
+    }
   };
+
+  useEffect(() => {
+    // Retrieve and set filters from localStorage when the component mounts
+    retrieveAndSetFilters();
+  }, []);
+
+  useEffect(() => {
+    // Apply filters when the flag is set to true
+    if (shouldApplyFilters) {
+      applyFilters();
+      // Reset the flag to false after applying filters
+      setShouldApplyFilters(false);
+    }
+  }, [shouldApplyFilters]);
+  
+const handleResetFilters = () => {
+  setPaidStatus("");
+  setPaymentmode("");
+  setClearanceStatus("");
+  setCostPriceMin("");
+  setCostPriceMax("");
+  setPaidBy("");
+  setDateFilterType("");
+  setSelectedDate(new Date().toISOString().split("T")[0]);
+  setStartDate(null);
+  setEndDate(null);
+  resetFilters();
+};
+
 
   return (
     <Modal

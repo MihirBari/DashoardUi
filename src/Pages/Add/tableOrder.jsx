@@ -106,11 +106,15 @@ const TableOrder = () => {
     setShowDeleteConfirmation(true); // Show the delete confirmation dialog
   };
 
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/order/viewOrder`);
+        const response = await axios.get(`${API_BASE_URL}/api/order/viewOrder`, {
+          params: filters, // Pass filters as parameters to the backend
+        });
         setUsers(response.data.products);
+        setFilteredUsers(response.data.products)
         setOrderData(response.data.total[0]);
         setFilteredDataForDetailModal(response.data.total[0]);
       } catch (err) {
@@ -118,9 +122,9 @@ const TableOrder = () => {
       }
     };
 
-    // Fetch orders without any filters when the component mounts
+    // Fetch orders with filters when the component mounts
     fetchOrders();
-  }, []); 
+  }, [filters]);
 
   const handleEditClick = (product_id) => {
     console.log("Editing order with ID:", product_id);
@@ -376,13 +380,13 @@ const TableOrder = () => {
           onClick={handleCiDetailClick}
         />
       </div>
-      <FilterModal
+        <FilterModal
         isOpen={filterModalIsOpen}
         onClose={() => setFilterModalIsOpen(false)}
         onApplyFilters={onApplyFilters}
-        filters={filters}
-        resetFilters={() => setFilters(initialFilters)}
+        resetFilters={() => setFilters(initialFilters)} // Pass initial filters to resetFilters
       />
+
       <DetailModal
         isOpen={filterModalIsOpens}
         onClose={() => setFilterModalIsOpens(false)}

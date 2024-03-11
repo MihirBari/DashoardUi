@@ -39,7 +39,8 @@ const EditOrder = () => {
           returned: orderData.returned || "No",
           paid_by: orderData.paid_by,
           bank_payment: orderData.bank_payment,
-          city:orderData.city
+          city:orderData.city,
+          delivery_status:orderData.delivery_status,
         });
         
       } catch (err) {
@@ -113,6 +114,8 @@ const EditOrder = () => {
                 {renderSelect("amount_condition", "Amount Credited", [
                   { value: "no", label: "No" },
                   { value: "yes", label: "Yes" },
+                  { value: "Yes Returned", label: "Yes Returned" },
+                  { value: "No Returned", label: "No Returned" },
                 ])}
               </div>
               <div>
@@ -120,8 +123,6 @@ const EditOrder = () => {
 
                   { value: "Yes", label: "Yes" },
                   { value: "No", label: "No" },
-                  { value: "Yes Returned", label: "Yes Returned" },
-                  { value: "No Returned", label: "No Returned" },
                 ])}
               </div>
               <div>

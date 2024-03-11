@@ -8,19 +8,7 @@ const FilterModal = ({
   onClose,
   onApplyFilters,
   resetFilters,
-  filters: initialFilters,
 }) => {
-  const [filters, setFilters] = useState(() => {
-    try {
-      const savedFilters = JSON.parse(localStorage.getItem("filters"));
-      if (savedFilters) {
-        return savedFilters;
-      }
-    } catch (error) {
-      console.error("Error retrieving filters from local storage:", error);
-    }
-    return initialFilters;
-  });
 
   const [productName, setProductName] = useState("");
   const [productType, setProductType] = useState("");
@@ -32,6 +20,7 @@ const FilterModal = ({
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [shouldApplyFilters, setShouldApplyFilters] = useState(false);
 
   useEffect(() => {
     fetchProductTypes();
@@ -47,48 +36,7 @@ const FilterModal = ({
   };
 
 
-  useEffect(() => {
-    try {
-      if (productName || productType.length > 0 || status.length > 0 ||
-        costPriceMin || costPriceMax || dateFilterType || selectedDate || startDate || endDate) {
-        const filtersToSave = {
-          productName,
-          productType,
-          status,
-          costPriceMin,
-          costPriceMax,
-          dateFilterType,
-          selectedDate,
-          startDate,
-          endDate,
-        };
-        localStorage.setItem("filters", JSON.stringify(filtersToSave));
-      }
-    } catch (error) {
-      console.error("Error saving filters to local storage:", error);
-    }
-  }, [productName, productType, status, costPriceMin, costPriceMax, dateFilterType, selectedDate, startDate, endDate]);
-
-  useEffect(() => {
-    try {
-      const savedFilters = JSON.parse(localStorage.getItem("filters"));
-      if (savedFilters) {
-        setFilters(savedFilters);
-      } else {
-        setFilters(initialFilters);
-      }
-    } catch (error) {
-      console.error("Error retrieving filters from local storage:", error);
-      setFilters(initialFilters);
-    }
-  }, []);
-
   const handleResetFilters = () => {
-    setFilters(initialFilters);
-    resetFilters();
-  };
-
-  useEffect(() => {
     setProductName("");
     setProductType("");
     setStatus("");
@@ -98,7 +46,8 @@ const FilterModal = ({
     setSelectedDate(new Date().toISOString().split("T")[0]);
     setStartDate(null);
     setEndDate(null);
-  }, [filters]);
+    resetFilters();
+  };
 
   const applyFilters = async () => {
     try {
@@ -115,11 +64,66 @@ const FilterModal = ({
           endDate: dateFilterType === "between" ? endDate : null,
         },
       });
-      onApplyFilters(response.data.products);
+      onApplyFilters(response.data.products,response.data.total[0]);
+           localStorage.setItem('wastefilters', JSON.stringify({
+        productName,
+        productType,
+        status,
+        costPriceMin,
+        costPriceMax,
+        dateFilterType,
+        selectedDate,
+        startDate,
+        endDate,
+      }));
     } catch (error) {
       console.error("Error applying filters:", error.message);
     }
   };
+
+  useEffect(() => {
+    // Retrieve filter values from localStorage
+    const storedFilters = localStorage.getItem('wastefilters');
+    if (storedFilters) {
+      const {
+        productName: storedproductName,
+        productType: storedproductType,
+        status:storedStatus,
+        costPriceMin: storedCostPriceMin,
+        costPriceMax: storedCostPriceMax,
+        dateFilterType: storedDateFilterType,
+        selectedDate: storedSelectedDate,
+        startDate: storedStartDate,
+        endDate: storedEndDate,
+      } = JSON.parse(storedFilters);
+  
+      // Set filter values to state
+      setProductName(storedproductName);
+      setProductType(storedproductType);
+      setStatus(storedStatus);
+      setCostPriceMin(storedCostPriceMin);
+      setCostPriceMax(storedCostPriceMax);
+      setDateFilterType(storedDateFilterType);
+      setSelectedDate(storedSelectedDate);
+      setStartDate(storedStartDate);
+      setEndDate(storedEndDate);
+
+  
+      // Apply retrieved filters
+      setShouldApplyFilters(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply filters when the flag is set to true
+    if (shouldApplyFilters) {
+      applyFilters();
+      // Reset the flag to false after applying filters
+      setShouldApplyFilters(false);
+    }
+  }, [shouldApplyFilters]);
+  
+  
   return (
     <Modal
       isOpen={isOpen}

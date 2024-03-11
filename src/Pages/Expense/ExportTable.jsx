@@ -91,10 +91,10 @@ const ExportTable = ({ data, isOpen, onRequestClose }) => {
       doc.text(`Amount: ${product.amount || ''}`, 10, yPos);
       yPos += 10; // Increment yPos for the next element
   
-      doc.text(`Paid By: ₹ ${product.paid_by || ''}`, 10, yPos);
+      doc.text(`Paid By:  ${product.paid_by || ''}`, 10, yPos);
       yPos += 10; // Increment yPos for the next element
   
-      doc.text(`Remark: ₹ ${product.remarks || ''}`, 10, yPos);
+      doc.text(`Remark:  ${product.remarks || ''}`, 10, yPos);
       yPos += 10; // Increment yPos for the next element
   
       doc.text(`Paid Status: ${product.paid_status || ''}`, 10, yPos);

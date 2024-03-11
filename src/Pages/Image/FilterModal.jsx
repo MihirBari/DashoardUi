@@ -13,7 +13,6 @@ const FilterModal = ({
   const [filters, setFilters] = useState(initialFilters);
   const [productName, setProductName] = useState("");
   const [productType, setProductType] = useState("");
-  const [status, setStatus] = useState("");
   const [costPriceMin, setCostPriceMin] = useState("");
   const [costPriceMax, setCostPriceMax] = useState("");
   const [dateFilterType, setDateFilterType] = useState("");
@@ -59,7 +58,6 @@ const FilterModal = ({
     // This useEffect will run after the state has been updated
     setProductName(""); // Reset productName when resetting filters
     setProductType(""); // Reset productType
-    setStatus(""); // Reset status
     setCostPriceMin(""); // Reset costPriceMin
     setCostPriceMax(""); // Reset costPriceMax
     setDateFilterType(""); // Reset dateFilterType
@@ -74,7 +72,6 @@ const FilterModal = ({
         params: {
           productName,
           productType,
-          status,
           costPriceMin,
           costPriceMax,
           dateFilterType,
@@ -126,18 +123,6 @@ const FilterModal = ({
               {type}
             </option>
             ))}
-        </select>
-
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500 ml-2"
-        >
-          <option value="">Select Status</option>
-          <option value="active">Active</option>
-          <option value="Close">Close</option>
-          <option value="upcoming">upcoming</option>
-          <option value="Draft">Draft</option>
         </select>
 
         <input

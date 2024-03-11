@@ -25,6 +25,7 @@ const FilterModal = ({
   ); // Today's date
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [shouldApplyFilters, setShouldApplyFilters] = useState(false);
 
   useEffect(() => {
     fetchProductTypes();
@@ -72,10 +73,69 @@ const FilterModal = ({
         }
       });
       onApplyFilters(response.data.dealers, response.data.total[0]); 
+      localStorage.setItem('SellerFilters', JSON.stringify({
+        paidStatus,
+        paidBy,
+        paymentmode,
+        clearanceStatus,
+        productType,
+        costPriceMin,
+        costPriceMax,
+        dateFilterType,
+        selectedDate,
+        startDate,
+        endDate,
+      }));
     } catch (error) {
       console.error("Error applying filters:", error.message);
     }
   };
+  
+  useEffect(() => {
+    // Retrieve filter values from localStorage
+    const storedFilters = localStorage.getItem('SellerFilters');
+    if (storedFilters) {
+      const {
+        paidStatus: storedPaidStatus,
+        paidBy: storedPaidBy,
+        paymentmode: storedPaymentmode,
+        clearanceStatus: storedClearanceStatus,
+        costPriceMin: storedCostPriceMin,
+        costPriceMax: storedCostPriceMax,
+        dateFilterType: storedDateFilterType,
+        selectedDate: storedSelectedDate,
+        startDate: storedStartDate,
+        endDate: storedEndDate,
+        productType:storedproductType
+      } = JSON.parse(storedFilters);
+  
+      // Set filter values to state
+      setPaidStatus(storedPaidStatus);
+      setPaidBy(storedPaidBy);
+      setPaymentmode(storedPaymentmode);
+      setClearanceStatus(storedClearanceStatus);
+      setCostPriceMin(storedCostPriceMin);
+      setCostPriceMax(storedCostPriceMax);
+      setDateFilterType(storedDateFilterType);
+      setSelectedDate(storedSelectedDate);
+      setStartDate(storedStartDate);
+      setEndDate(storedEndDate);
+      setProductType(storedproductType)
+  
+      // Apply retrieved filters
+      setShouldApplyFilters(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply filters when the flag is set to true
+    if (shouldApplyFilters) {
+      applyFilters();
+      // Reset the flag to false after applying filters
+      setShouldApplyFilters(false);
+    }
+  }, [shouldApplyFilters]);
+  
 
   const handleResetFilters = () => {
     setPaidStatus("");

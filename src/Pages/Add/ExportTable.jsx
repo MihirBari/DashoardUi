@@ -86,6 +86,15 @@ const ExportTable = ({ data, marketColumns, isOpen, onRequestClose }) => {
 
         doc.text(`Size: ${product.Total_items || ""}`, 10, yPos);
         yPos += 10;
+
+        doc.text(`Delivery Status: ${product.delivery_status || ""}`, 10, yPos);
+        yPos += 10;
+
+        doc.text(`Bank Payment: ${product.bank_payment || ""}`, 10, yPos);
+        yPos += 10;
+
+        doc.text(`Profit Margin: ${product.Final_cost - product.bank_payment || ""}`, 10, yPos);
+        yPos += 10;
   
       }
   

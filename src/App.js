@@ -36,6 +36,8 @@ import AddHistory from './Pages/history/addHistory.jsx';
 import Dashboard from './Pages/Dashboad/Dashboad.jsx';
 import WasteProducts from './Pages/wasteProduct/WasteProducts.jsx';
 import { EditOrders } from './Pages/Image/EditOrders.jsx';
+import ViewWasteProduct from './Pages/wasteProduct/ViewWasteProduct.jsx';
+import { EditWasteProduct } from './Pages/wasteProduct/EditWasteProduct.jsx';
 
 
 function App() {
@@ -49,7 +51,7 @@ function App() {
         <Route path='/dashboard' element={currentUser ? <Dashboard /> : <Navigate to='/' />} />
         <Route path='/user/edit/:id' element={currentUser ? <EditUser /> : <Navigate to='/' />} />
         <Route path='/adduser' element={currentUser ? <AddUser /> : <Navigate to='/' />} />
-        <Route path='/product' element={currentUser ? <Product /> : <Navigate to='/' />} />WasteProducts
+        <Route path='/product' element={currentUser ? <Product /> : <Navigate to='/' />} />
         <Route path='/wasteProducts' element={currentUser ? <WasteProducts /> : <Navigate to='/' />} />
         <Route path='/addProd' element={currentUser ? <AddProd /> : <Navigate to='/' />} />
         <Route path='/Seller' element={currentUser ? <Seller /> : <Navigate to='/' />} />
@@ -70,11 +72,16 @@ function App() {
         <Route path='/Expense/edit/:id' element={currentUser ? <EditExpense /> : <Navigate to='/' />} />
         <Route path='/Market/edit/:id' element={currentUser ? <EditMarket /> : <Navigate to='/' />} />
         <Route path='/Product/:product_Id' element={currentUser ? <VeiwProduct /> : <Navigate to='/' />} />
+        <Route path='/wasteProducts/:product_Id' element={currentUser ? <ViewWasteProduct /> : <Navigate to='/' />} />
         <Route path='/Expense/:id' element={currentUser ? <ViewExpense /> : <Navigate to='/' />} />
         <Route path='/Seller/:id' element={currentUser ? <ViewSeller /> : <Navigate to='/' />} />
         <Route
           path='/Product/edit/:product_id'
           element={currentUser ? <EditProduct /> : <Navigate to='/' />}
+        />
+         <Route
+          path='/wasteProducts/edit/:product_id'
+          element={currentUser ? <EditWasteProduct /> : <Navigate to='/' />}
         />
          <Route
           path='/Search/edit/:product_id'

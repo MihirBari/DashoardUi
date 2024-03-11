@@ -173,12 +173,12 @@ const TableProduct = () => {
       sortable: true,
       width: "150px",
     },
-    // {
-    //   name: "Selling Price",
-    //   selector: (row) => row.product_price,
-    //   sortable: true,
-    //   width: "150px",
-    // },
+    {
+      name: "Selling Price",
+      selector: (row) => row.product_price,
+      sortable: true,
+      width: "150px",
+    },
     {
       name: "Cost Price",
       selector: (row) => row.Final_cost,
@@ -189,7 +189,7 @@ const TableProduct = () => {
       name: "Type",
       selector: (row) => row.product_type,
       sortable: true,
-      width: "150px",
+      width: "250px",
     },
     {
       name: "Stock",
@@ -288,7 +288,6 @@ const TableProduct = () => {
   const initialFilters = {
     productName: "",
     productType: "",
-
     costPriceMin: "",
     costPriceMax: "",
     dateFilterType: "",

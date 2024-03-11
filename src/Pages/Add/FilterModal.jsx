@@ -26,6 +26,7 @@ const FilterModal = ({
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [orderIds, setOrderIds] = useState([]);
+  const [shouldApplyFilters, setShouldApplyFilters] = useState(false);
 
   useEffect(() => {
     const fetchorderIds = async () => {
@@ -86,29 +87,95 @@ const FilterModal = ({
       });
       console.log("Server Response:", response.data); // Log the response
       onApplyFilters(response.data.products, response.data.total[0]);
+      localStorage.setItem('OrderFilters', JSON.stringify({
+        productName,
+        amountCredited,
+        returned,
+        orderId,
+        soldBy,
+        city,
+        size,
+        deliveryStatus,
+        costPriceMin,
+        costPriceMax,
+        dateFilterType,
+        selectedDate,
+        startDate,
+        endDate,
+      }));
     } catch (error) {
       console.error("Error applying filters:", error.message);
     }
   };
+  
+  useEffect(() => {
+    // Retrieve filter values from localStorage
+    const storedFilters = localStorage.getItem('OrderFilters');
+    if (storedFilters) {
+      const {
+        productName: storedproductName,
+        amountCredited: storedamountCredited,
+        returned: storedreturned,
+        orderId: storedorderId,
+        soldBy: storedsoldBy,
+        city: storedcity,
+        size: storedsize,
+        deliveryStatus: storedeliveryStatus,
+        costPriceMin: storedCostPriceMin,
+        costPriceMax: storedCostPriceMax,
+        dateFilterType: storedDateFilterType,
+        selectedDate: storedSelectedDate,
+        startDate: storedStartDate,
+        endDate: storedEndDate,
+      } = JSON.parse(storedFilters);
+  
+      // Set filter values to state
+      setProductName(storedproductName);
+      setAmountCredited(storedamountCredited);
+      setReturned(storedreturned);
+      setSoldBy(storedsoldBy);
+      setOrderId(storedorderId);
+      setCity(storedcity);
+      setDeliveryStatus(storedeliveryStatus);
+      setSize(storedsize);
+      setCostPriceMin(storedCostPriceMin);
+      setCostPriceMax(storedCostPriceMax);
+      setDateFilterType(storedDateFilterType);
+      setSelectedDate(storedSelectedDate);
+      setStartDate(storedStartDate);
+      setEndDate(storedEndDate);
+
+  
+      // Apply retrieved filters
+      setShouldApplyFilters(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply filters when the flag is set to true
+    if (shouldApplyFilters) {
+      applyFilters();
+      // Reset the flag to false after applying filters
+      setShouldApplyFilters(false);
+    }
+  }, [shouldApplyFilters]);
 
   const handleResetFilters = () => {
-    // Reset all filter states to their initial values
     setProductName("");
     setAmountCredited("");
     setReturned("");
     setOrderId("");
     setSoldBy("");
     setCity("");
-    setSize("");
+    setSize([]);
     setDeliveryStatus("");
     setCostPriceMin("");
     setCostPriceMax("");
     setDateFilterType("");
-    setSelectedDate("");
+    setSelectedDate(new Date().toISOString().split("T")[0]);
     setStartDate(null);
     setEndDate(null);
-
-    resetFilters(); // Reset filters in parent component if needed
+    resetFilters(); // Reset filters to their initial state
   };
 
   return (
@@ -195,6 +262,8 @@ const FilterModal = ({
           <option value="">Select Amount Credited</option>
           <option value="yes">Yes</option>
           <option value="no">No</option>
+          <option value="yes Returned">Yes Returned</option>
+          <option value="no Returned">No Returned</option>
         </select>
 
         <select
